@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/constants/screen_titles.dart';
+import 'package:ecommerceapp/screens/products_list.dart';
 import 'package:ecommerceapp/widgets/auth_screen_custom_painter.dart';
 import 'package:ecommerceapp/widgets/round_icon_button.dart';
 import 'package:ecommerceapp/widgets/underlined_text..dart';
@@ -172,7 +173,14 @@ class _AuthScreenState extends State<AuthScreen> {
               backgroundColor: Color(0xff4b515a),
               iconData: Icons.arrow_forward,
               iconColor: Colors.white,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductList(),
+                  ),
+                );
+              },
             ),
           ],
         ),
