@@ -25,12 +25,14 @@ class RoundIconButton extends StatelessWidget {
       child: Material(
         borderRadius: BorderRadius.circular(50),
         color: backgroundColor,
-        child: IconButton(
-          icon: Icon(
-            iconData,
-            color: iconColor,
+        child: Center(
+          child: IconButton(
+            icon: Icon(
+              iconData,
+              color: iconColor,
+            ),
+            onPressed: onPressed,
           ),
-          onPressed: onPressed,
         ),
       ),
     );

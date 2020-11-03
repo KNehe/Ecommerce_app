@@ -1,3 +1,4 @@
+import 'package:ecommerceapp/screens/product_detail.dart';
 import 'package:ecommerceapp/widgets/category.dart';
 import 'package:ecommerceapp/widgets/product.dart';
 import 'package:flutter/material.dart';
@@ -167,7 +168,14 @@ class _ProductListState extends State<ProductList> {
                         productImage: index % 2 == 0
                             ? Image.asset("assets/images/fish.jpg")
                             : Image.asset("assets/images/cake.jpg"),
-                        onProductTapped: () {},
+                        onProductTapped: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetail(),
+                            ),
+                          );
+                        },
                       );
                     }),
               ),
