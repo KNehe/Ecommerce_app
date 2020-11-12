@@ -23,6 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^0.11.3+17
+  stripe_payment: ^1.0.8
+
+
 
 
   # The following adds the Cupertino Icons font to your application.
