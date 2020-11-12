@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/screens/thank_you.dart';
+import 'package:ecommerceapp/services/stripe_service.dart';
 import 'package:flutter/material.dart';
 
 class PaymentDetails extends StatefulWidget {
@@ -9,6 +10,12 @@ class PaymentDetails extends StatefulWidget {
 }
 
 class _PaymentDetailsState extends State<PaymentDetails> {
+  @override
+  void initState() {
+    super.initState();
+    StripeService.init();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -135,13 +142,17 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Thanks(),
-                            ),
-                          );
+                        onPressed: () async {
+                          var result = await StripeService.processPayment(
+                              '40000', 'usd');
+                          if (result.success) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Thanks(),
+                              ),
+                            );
+                          }
                         },
                         child: Text(
                           "PAY",
