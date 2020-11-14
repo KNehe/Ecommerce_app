@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/screens/payment_details.dart';
+import 'package:ecommerceapp/services/paypal_service.dart';
 import 'package:flutter/material.dart';
 
 class PaymentMethod extends StatefulWidget {
@@ -204,8 +205,8 @@ class _PaymentMethodState extends State<PaymentMethod> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () {
-                        print('f');
+                      onPressed: () async {
+                        await PayPalService.processPayment("14");
                       },
                       child: RichText(
                         text: TextSpan(
