@@ -25,6 +25,8 @@ dependencies:
     sdk: flutter
   http: ^0.11.3+17
   stripe_payment: ^1.0.8
+  flutter_braintree: ^1.1.0
+
 
 
 
