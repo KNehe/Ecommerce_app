@@ -1,4 +1,4 @@
-import 'package:ecommerceapp/screens/auth_screen.dart';
+import 'package:ecommerceapp/screens/products_list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class EcommerceApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AuthScreen(),
+      home: ProductList(),
     );
   }
 }
