@@ -1,7 +1,9 @@
+import 'package:ecommerceapp/controllers/product_controller.dart';
 import 'package:ecommerceapp/screens/shopping_cart.dart';
 import 'package:ecommerceapp/widgets/cart_button.dart';
 import 'package:ecommerceapp/widgets/round_cart_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ProductDetail extends StatelessWidget {
   const ProductDetail({Key key}) : super(key: key);
@@ -12,10 +14,12 @@ class ProductDetail extends StatelessWidget {
     double _leftMargin = 18;
     double _rightMargin = 10;
 
+    final ProductController productController = Get.find();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Food",
+          "${productController.selectedProduct.value.category}",
           style: TextStyle(
             color: Colors.black,
             fontSize: 30,
@@ -52,9 +56,9 @@ class ProductDetail extends StatelessWidget {
                   //product image
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.red,
                       image: DecorationImage(
-                        image: AssetImage("assets/images/fish.jpg"),
+                        image: NetworkImage(
+                            productController.selectedProduct.value.imageUrl),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -73,12 +77,12 @@ class ProductDetail extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Fish",
+                          "${productController.selectedProduct.value.name}",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
                         ),
                         Text(
-                          "\$100",
+                          "\$ ${productController.selectedProduct.value.price}",
                           style: TextStyle(fontSize: 15),
                         ),
                       ],
@@ -145,7 +149,7 @@ class ProductDetail extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    "Enjoy the best fish avaialable with your family. Fish is very rich in proteins.Enjoy the best fish avaialable with your family. Fish is very rich in proteins.Enjoy the best fish avaialable with your family. Fish is very rich in proteins.Enjoy the best fish avaialable with your family. Fish is very rich in proteins/Enjoy the best fish avaialable with your family. Fish is very rich in proteins",
+                    "${productController.selectedProduct.value.details}",
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                     ),
