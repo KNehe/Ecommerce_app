@@ -1,46 +1,42 @@
 import 'package:ecommerceapp/models/product.dart';
 import 'package:ecommerceapp/services/product_service.dart';
-import 'package:get/get.dart';
 import 'dart:convert';
 
-class ProductController extends GetxController {
+import 'package:flutter/foundation.dart';
+
+class ProductController extends ChangeNotifier {
   final _productService = ProductService();
 
-  var productList = List<Product>().obs;
+  var productList = List<Product>();
 
-  var isLoadingAllProducts = true.obs;
-
-  var selectedProduct = Product().obs;
-
-  @override
-  void onInit() {
-    getAllProducts();
-    super.onInit();
-  }
+  var isLoadingAllProducts = true;
 
   void getAllProducts() async {
     try {
-      isLoadingAllProducts(true);
+      isLoadingAllProducts = true;
       var response = await _productService.getAllProducts();
 
       if (response.statusCode == 200) {
         var responseJsonStr = json.decode(response.body);
         var jsonProd = responseJsonStr['data']['products'];
-        productList.assignAll(productFromJson(json.encode(jsonProd)));
-        isLoadingAllProducts(false);
+        productList.addAll(productFromJson(json.encode(jsonProd)));
+        isLoadingAllProducts = false;
+        notifyListeners();
       } else {
         print('failure');
-        isLoadingAllProducts(false);
+        isLoadingAllProducts = false;
+        notifyListeners();
       }
     } catch (e) {
-      isLoadingAllProducts(false);
+      isLoadingAllProducts = false;
       print("Error ${e.toString()}");
+      notifyListeners();
     }
   }
 
   void getProductByCategory(String value) async {
     try {
-      isLoadingAllProducts(true);
+      isLoadingAllProducts = true;
 
       var response = value == 'All'
           ? await _productService.getAllProducts()
@@ -52,22 +48,26 @@ class ProductController extends GetxController {
             ? responseJsonStr['data']['products']
             : responseJsonStr['data']['result'];
 
-        productList.assignAll(productFromJson(json.encode(jsonProd)));
-        isLoadingAllProducts(false);
+        productList.clear();
+        productList.addAll(productFromJson(json.encode(jsonProd)));
+        isLoadingAllProducts = false;
+        notifyListeners();
       } else {
         print('failure');
-        isLoadingAllProducts(false);
+        isLoadingAllProducts = false;
+        notifyListeners();
       }
     } catch (e) {
-      isLoadingAllProducts(false);
+      isLoadingAllProducts = false;
       print("Error ${e.toString()}");
+      notifyListeners();
     }
   }
 
   void getProductByCategoryOrName(String value) async {
     var finalSearchValue = value.trim();
     try {
-      isLoadingAllProducts(true);
+      isLoadingAllProducts = true;
 
       var response = finalSearchValue == ''
           ? await _productService.getAllProducts()
@@ -79,15 +79,19 @@ class ProductController extends GetxController {
             ? responseJsonStr['data']['products']
             : responseJsonStr['data']['result'];
 
-        productList.assignAll(productFromJson(json.encode(jsonProd)));
-        isLoadingAllProducts(false);
+        productList.clear();
+        productList.addAll(productFromJson(json.encode(jsonProd)));
+        isLoadingAllProducts = false;
+        notifyListeners();
       } else {
         print('failure');
-        isLoadingAllProducts(false);
+        isLoadingAllProducts = false;
+        notifyListeners();
       }
     } catch (e) {
-      isLoadingAllProducts(false);
+      isLoadingAllProducts = false;
       print("Error ${e.toString()}");
+      notifyListeners();
     }
   }
 }

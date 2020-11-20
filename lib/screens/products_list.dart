@@ -1,5 +1,7 @@
+import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/controllers/category_controller.dart';
 import 'package:ecommerceapp/controllers/product_controller.dart';
+import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/screens/product_detail.dart';
 import 'package:ecommerceapp/skeletons/category_list_skeleton.dart';
 import 'package:ecommerceapp/skeletons/product_list_skeleton.dart';
@@ -8,6 +10,7 @@ import 'package:ecommerceapp/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProductList extends StatefulWidget {
@@ -19,14 +22,15 @@ class ProductList extends StatefulWidget {
 
 class _ProductListState extends State<ProductList> {
   var _textEditingController = TextEditingController();
-  var _productController = Get.put(ProductController());
-  var _categoryController = Get.put(CategoryController());
-
   int _categorySelectedIndex;
+  var _productController;
 
   @override
   void initState() {
     super.initState();
+    _productController = Provider.of<ProductController>(context, listen: false);
+    _productController.getAllProducts();
+    Provider.of<CategoryController>(context, listen: false).getAllCategories();
     _textEditingController.addListener(_handleSearchField);
     _categorySelectedIndex = 0;
   }
@@ -124,37 +128,35 @@ class _ProductListState extends State<ProductList> {
 
             // Horizontal list of categories
             Container(
-              height: 50,
-              margin: EdgeInsets.only(left: _leftMargin, right: _rightMargin),
-              child: Obx(() {
-                if (_categoryController.isLoadingCategories.value)
-                  return Shimmer.fromColors(
-                    child: CategoryListSkeleton(),
-                    baseColor: Colors.grey[200],
-                    highlightColor: Colors.grey[400],
-                  );
+                height: 50,
+                margin: EdgeInsets.only(left: _leftMargin, right: _rightMargin),
+                child: Consumer<CategoryController>(
+                    builder: (context, cateogoryCtlr, child) {
+                  if (cateogoryCtlr.isLoadingCategories)
+                    return Shimmer.fromColors(
+                      child: CategoryListSkeleton(),
+                      baseColor: Colors.grey[200],
+                      highlightColor: Colors.grey[400],
+                    );
 
-                return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _categoryController.categoryList.length,
-                    itemBuilder: (context, index) {
-                      return Category(
-                        category:
-                            _categoryController.categoryList[index].category,
-                        categoryIndex: index,
-                        categorySelectedIndex: _categorySelectedIndex,
-                        onTapped: () {
-                          setState(() {
-                            _categorySelectedIndex = index;
-                          });
-                          _productController.getProductByCategory(
-                              _categoryController.categoryList[index].category);
-                        },
-                      );
-                    });
-              }),
-            ),
-
+                  return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: cateogoryCtlr.categoryList.length,
+                      itemBuilder: (context, index) {
+                        return Category(
+                          category: cateogoryCtlr.categoryList[index].category,
+                          categoryIndex: index,
+                          categorySelectedIndex: _categorySelectedIndex,
+                          onTapped: () {
+                            setState(() {
+                              _categorySelectedIndex = index;
+                            });
+                            _productController.getProductByCategory(
+                                cateogoryCtlr.categoryList[index].category);
+                          },
+                        );
+                      });
+                })),
             SizedBox(
               height: 30,
             ),
@@ -163,8 +165,9 @@ class _ProductListState extends State<ProductList> {
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(left: _leftMargin, right: _rightMargin),
-                child: Obx(() {
-                  if (_productController.isLoadingAllProducts.value)
+                child: Consumer<ProductController>(
+                    builder: (context, productCtlr, child) {
+                  if (productCtlr.isLoadingAllProducts)
                     return Center(
                       child: Shimmer.fromColors(
                         child: ProductListSkeleton(),
@@ -172,8 +175,8 @@ class _ProductListState extends State<ProductList> {
                         highlightColor: Colors.grey[400],
                       ),
                     );
-                  if (!_productController.isLoadingAllProducts.value &&
-                      _productController.productList.length == 0)
+                  if (!productCtlr.isLoadingAllProducts &&
+                      productCtlr.productList.length == 0)
                     return Center(
                       child: Text(
                         'Results not found ',
@@ -190,13 +193,11 @@ class _ProductListState extends State<ProductList> {
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 15,
                     ),
-                    itemCount: _productController.productList.length,
+                    itemCount: productCtlr.productList.length,
                     itemBuilder: (context, index) {
                       return ProductCard(
-                        product: _productController.productList[index],
+                        product: productCtlr.productList[index],
                         onProductTapped: () {
-                          _productController.selectedProduct.value =
-                              _productController.productList[index];
                           Navigator.push(
                             context,
                             MaterialPageRoute(

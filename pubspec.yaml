@@ -28,6 +28,7 @@ dependencies:
   flutter_braintree: ^1.1.0
   get: ^3.17.1
   shimmer: ^1.1.2
+  provider: ^4.3.2+2
 
 
 
