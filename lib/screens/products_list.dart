@@ -198,6 +198,8 @@ class _ProductListState extends State<ProductList> {
                       return ProductCard(
                         product: productCtlr.productList[index],
                         onProductTapped: () {
+                          productCtlr.getProductById(
+                              productCtlr.productList[index].id);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

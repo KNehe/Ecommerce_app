@@ -23,4 +23,8 @@ class ProductService {
   Future getProductByCategory(String value) async {
     return await http.get('${AppProperties.searchByCategoryUrl}$value');
   }
+
+  Future getProductById(String id) async {
+    return await http.get('${AppProperties.productUrl}$id');
+  }
 }
