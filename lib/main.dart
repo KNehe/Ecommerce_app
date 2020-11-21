@@ -1,6 +1,9 @@
+import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/controllers/category_controller.dart';
 import 'package:ecommerceapp/controllers/product_controller.dart';
+import 'package:ecommerceapp/screens/product_detail.dart';
 import 'package:ecommerceapp/screens/products_list.dart';
+import 'package:ecommerceapp/screens/shopping_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +17,8 @@ class EcommerceApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ProductController()),
-        ChangeNotifierProvider(create: (context) => CategoryController())
+        ChangeNotifierProvider(create: (context) => CategoryController()),
+        ChangeNotifierProvider(create: (context) => CartController())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -23,7 +27,12 @@ class EcommerceApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: ProductList(),
+        initialRoute: ProductList.id,
+        routes: {
+          ProductList.id: (context) => ProductList(),
+          ShoppingCart.id: (context) => ShoppingCart(),
+          ProductDetail.id: (context) => ProductDetail(),
+        },
       ),
     );
   }

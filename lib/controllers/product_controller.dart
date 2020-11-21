@@ -13,8 +13,6 @@ class ProductController extends ChangeNotifier {
 
   var isLoadingProduct = true;
 
-  var selectedProduct = Product();
-
   void getAllProducts() async {
     try {
       isLoadingAllProducts = true;
@@ -94,29 +92,6 @@ class ProductController extends ChangeNotifier {
       }
     } catch (e) {
       isLoadingAllProducts = false;
-      print("Error ${e.toString()}");
-      notifyListeners();
-    }
-  }
-
-  void getProductById(String id) async {
-    try {
-      isLoadingProduct = true;
-      var response = await _productService.getProductById(id);
-
-      if (response.statusCode == 200) {
-        var responseJsonStr = json.decode(response.body);
-        var jsonProd = responseJsonStr['data']['product'];
-        selectedProduct = Product.fromJson(jsonProd);
-        isLoadingProduct = false;
-        notifyListeners();
-      } else {
-        print('failure');
-        isLoadingProduct = false;
-        notifyListeners();
-      }
-    } catch (e) {
-      isLoadingProduct = false;
       print("Error ${e.toString()}");
       notifyListeners();
     }
