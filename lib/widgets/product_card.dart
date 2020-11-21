@@ -23,7 +23,7 @@ class ProductCard extends StatelessWidget {
             Expanded(
               child: Image.network(
                 product.imageUrl,
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.fill,
               ),
             ),
             Padding(

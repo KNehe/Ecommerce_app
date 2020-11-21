@@ -1,20 +1,22 @@
+import 'package:badges/badges.dart';
+import 'package:ecommerceapp/constants/screen_ids.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/controllers/category_controller.dart';
 import 'package:ecommerceapp/controllers/product_controller.dart';
-import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/screens/product_detail.dart';
+import 'package:ecommerceapp/screens/shopping_cart.dart';
 import 'package:ecommerceapp/skeletons/category_list_skeleton.dart';
 import 'package:ecommerceapp/skeletons/product_list_skeleton.dart';
 import 'package:ecommerceapp/widgets/category.dart';
 import 'package:ecommerceapp/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProductList extends StatefulWidget {
   ProductList({Key key}) : super(key: key);
+  static String id = ProductList_Screen_Id;
 
   @override
   _ProductListState createState() => _ProductListState();
@@ -24,6 +26,7 @@ class _ProductListState extends State<ProductList> {
   var _textEditingController = TextEditingController();
   int _categorySelectedIndex;
   var _productController;
+  var _cartController;
 
   @override
   void initState() {
@@ -31,6 +34,7 @@ class _ProductListState extends State<ProductList> {
     _productController = Provider.of<ProductController>(context, listen: false);
     _productController.getAllProducts();
     Provider.of<CategoryController>(context, listen: false).getAllCategories();
+    _cartController = Provider.of<CartController>(context, listen: false);
     _textEditingController.addListener(_handleSearchField);
     _categorySelectedIndex = 0;
   }
@@ -63,12 +67,27 @@ class _ProductListState extends State<ProductList> {
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
         actions: [
-          IconButton(
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.orange,
+          Container(
+            margin: EdgeInsets.only(right: 20, top: _rightMargin),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, ShoppingCart.id);
+              },
+              child: Badge(
+                padding: EdgeInsets.all(5),
+                badgeContent: Text(
+                  '${context.watch<CartController>().cart.length}',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                child: Icon(
+                  Icons.shopping_cart,
+                  color: Colors.orange,
+                ),
               ),
-              onPressed: () {})
+            ),
+          ),
         ],
         backgroundColor: Colors.white,
       ),
@@ -198,14 +217,9 @@ class _ProductListState extends State<ProductList> {
                       return ProductCard(
                         product: productCtlr.productList[index],
                         onProductTapped: () {
-                          productCtlr.getProductById(
+                          _cartController.setCurrentItem(
                               productCtlr.productList[index].id);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetail(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, ProductDetail.id);
                         },
                       );
                     },

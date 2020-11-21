@@ -1,5 +1,8 @@
-import 'package:ecommerceapp/controllers/product_controller.dart';
+import 'dart:ui';
+import 'package:ecommerceapp/constants/screen_ids.dart';
 import 'package:ecommerceapp/screens/shopping_cart.dart';
+import 'package:badges/badges.dart';
+import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/skeletons/product_detail_skeleton.dart';
 import 'package:ecommerceapp/widgets/cart_button.dart';
 import 'package:ecommerceapp/widgets/round_cart_button.dart';
@@ -9,15 +12,37 @@ import 'package:shimmer/shimmer.dart';
 
 class ProductDetail extends StatefulWidget {
   ProductDetail({Key key}) : super(key: key);
+  static String id = ProductDetail_Screen_Id;
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  var _cartCtlr;
+
   @override
   void initState() {
+    _cartCtlr = Provider.of<CartController>(context, listen: false);
     super.initState();
+  }
+
+  _handleButtonTap(context) {
+    if (!_cartCtlr.isItemInCart(_cartCtlr.selectedItem)) {
+      _cartCtlr.addToCart(_cartCtlr.selectedItem);
+    } else {
+      Scaffold.of(context).showBottomSheet(
+        (context) => ProductDetailBottomSheet(cartCtlr: _cartCtlr),
+      );
+    }
+  }
+
+  _handleQuantityIncrease() {
+    _cartCtlr.increaseCartItemAndProductDetailItemQuantity();
+  }
+
+  _handleQuantityDecrease() {
+    _cartCtlr.decreaseCartItemAndProductDetailItemQuantity();
   }
 
   @override
@@ -28,41 +53,51 @@ class _ProductDetailState extends State<ProductDetail> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Consumer<ProductController>(
-          builder: (context, ctlr, child) {
-            return Text(
-              "${ctlr.selectedProduct.category}",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 30,
-              ),
-            );
+        title: Consumer<CartController>(
+          builder: (context, cartCtlr, child) {
+            if (!cartCtlr.isLoadingProduct) {
+              return Text(
+                "${cartCtlr.selectedItem.product.category}",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 30,
+                ),
+              );
+            }
+            return Text('...');
           },
         ),
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.shopping_cart,
-              color: Colors.orange,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ShoppingCart(),
+          Container(
+            margin: EdgeInsets.only(right: 20, top: _rightMargin),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, ShoppingCart.id);
+              },
+              child: Badge(
+                padding: EdgeInsets.all(5),
+                badgeContent: Text(
+                  '${context.watch<CartController>().cart.length}',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
-              );
-            },
+                child: Icon(
+                  Icons.shopping_cart,
+                  color: Colors.orange,
+                ),
+              ),
+            ),
           ),
         ],
         backgroundColor: Colors.white,
       ),
       body: SafeArea(
-        child: Consumer<ProductController>(
-          builder: (context, productCtlr, child) {
-            if (productCtlr.isLoadingProduct) {
+        child: Consumer<CartController>(
+          builder: (context, cartCtlr, child) {
+            if (cartCtlr.isLoadingProduct) {
               return Center(
                 child: Shimmer.fromColors(
                   child: ProductDetailSkeleton(),
@@ -84,7 +119,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: NetworkImage(
-                                productCtlr.selectedProduct.imageUrl),
+                                cartCtlr.selectedItem.product.imageUrl),
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -103,12 +138,12 @@ class _ProductDetailState extends State<ProductDetail> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "${productCtlr.selectedProduct.name}",
+                              "${cartCtlr.selectedItem.product.name}",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                             Text(
-                              "\$${productCtlr.selectedProduct.price}",
+                              "\$${cartCtlr.selectedItem.product.price}",
                               style: TextStyle(fontSize: 15),
                             ),
                           ],
@@ -126,29 +161,40 @@ class _ProductDetailState extends State<ProductDetail> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // increment and decrement buttons
+                              // quantity ,increment,and decrement buttons
                               Row(
                                 children: [
+                                  //decrement button
                                   RoundCartButton(
-                                      icon: Icons.remove, onTap: () => {}),
+                                    icon: Icons.remove,
+                                    onTap: () {
+                                      _handleQuantityDecrease();
+                                    },
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
+                                    // quantity
                                     child: Text(
-                                      '20',
+                                      '${context.watch<CartController>().selectedItem.quantity}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),
+                                  // increment button
                                   RoundCartButton(
                                     icon: Icons.add,
-                                    onTap: () => {},
+                                    onTap: () {
+                                      _handleQuantityIncrease();
+                                    },
                                   ),
                                 ],
                               ),
 
                               //add to cart button
                               InkWell(
-                                onTap: () => {},
+                                onTap: () {
+                                  _handleButtonTap(context);
+                                },
                                 child: CartButton(
                                   text: "ADD",
                                 ),
@@ -177,7 +223,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         height: 10,
                       ),
                       Text(
-                        "${productCtlr.selectedProduct.details}",
+                        "${cartCtlr.selectedItem.product.details}",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                         ),
@@ -195,6 +241,71 @@ class _ProductDetailState extends State<ProductDetail> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class ProductDetailBottomSheet extends StatelessWidget {
+  const ProductDetailBottomSheet({
+    Key key,
+    @required cartCtlr,
+  })  : _cartCtlr = cartCtlr,
+        super(key: key);
+
+  final _cartCtlr;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      color: Colors.grey[200],
+      child: Column(
+        children: [
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            '${_cartCtlr.selectedItem.product.name} already in cart',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              RaisedButton(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: BorderSide(color: Colors.red)),
+                color: Colors.red,
+                onPressed: () {
+                  _cartCtlr.removeFromCart(_cartCtlr.selectedItem);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'REMOVE',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Text('OR'),
+              InkWell(
+                child: CartButton(text: 'View cart'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, ShoppingCart.id);
+                },
+              )
+            ],
+          ),
+        ],
       ),
     );
   }
