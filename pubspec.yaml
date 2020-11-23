@@ -30,6 +30,9 @@ dependencies:
   shimmer: ^1.1.2
   provider: ^4.3.2+2
   badges: ^1.1.4
+  flutter_secure_storage: ^3.3.5
+  progress_dialog: ^1.2.4
+
 
 
 

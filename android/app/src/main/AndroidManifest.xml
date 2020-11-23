@@ -9,7 +9,10 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="ecommerceapp"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/my_backup_rules"
+        >
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

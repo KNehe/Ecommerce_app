@@ -143,4 +143,8 @@ class CartController extends ChangeNotifier {
     }
     print("__________________________________________________");
   }
+
+  resetCart() {
+    cart.clear();
+  }
 }

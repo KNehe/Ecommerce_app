@@ -1,20 +1,105 @@
+import 'package:ecommerceapp/constants/payment.dart';
+import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/controllers/auth_controller.dart';
+import 'package:ecommerceapp/controllers/cart_controller.dart';
+import 'package:ecommerceapp/controllers/order_controller.dart';
+import 'package:ecommerceapp/controllers/shipping_controller.dart';
 import 'package:ecommerceapp/screens/payment_details.dart';
+import 'package:ecommerceapp/screens/thank_you.dart';
 import 'package:ecommerceapp/services/paypal_service.dart';
+import 'package:ecommerceapp/services/stripe_service.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:provider/provider.dart';
 
 class PaymentMethod extends StatefulWidget {
   PaymentMethod({Key key}) : super(key: key);
+  static String id = PaymentMethod_Screen_Id;
 
   @override
   _PaymentMethodState createState() => _PaymentMethodState();
 }
 
 class _PaymentMethodState extends State<PaymentMethod> {
+  var _authController;
+  var _cartController;
+  var _shippingController;
+  var _orderController;
+
+  @override
+  void initState() {
+    _authController = AuthController();
+    _cartController = Provider.of<CartController>(context, listen: false);
+    _shippingController =
+        Provider.of<ShippingController>(context, listen: false);
+    _orderController = Provider.of<OrderController>(context, listen: false);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
+    var totalItemPrice = _cartController.cart.fold(
+        0,
+        (previousValue, element) =>
+            previousValue + (element.product.price * element.quantity));
+    int tax = _orderController.tax;
+    int shippingCost = _orderController.shippingCost;
+
+    var total = totalItemPrice + tax + shippingCost;
+    String totalToString = total.toString() + '100';
+
+    ProgressDialog pr = ProgressDialog(context);
+    pr = ProgressDialog(
+      context,
+      type: ProgressDialogType.Normal,
+      isDismissible: false,
+      showLogs: false,
+    );
+    pr.style(
+      message: 'Please wait...',
+    );
+
+    final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+    _peformStateReset() {
+      _cartController.resetCart();
+      _shippingController.reset();
+    }
+
+    _handleStripeSucessPayment() async {
+      var data = await _authController.getUserIdAndLoginStatus();
+
+      _orderController.registerOrderWithStripePayment(
+        _shippingController.getShippingDetails(),
+        shippingCost.toString(),
+        tax.toString(),
+        total.toString(),
+        totalItemPrice.toString(),
+        data[1],
+        STRIPE_PAYMENT,
+        _cartController.cart,
+      );
+
+      await pr.hide();
+      //_peformStateReset();
+      Navigator.pushNamed(context, Thanks.id);
+    }
+
+    _handleStripeFailurePayment() async {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text('Process cancelled'),
+        ),
+      );
+      await pr.hide();
+    }
+
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
             'Order summary & Payment method',
@@ -40,6 +125,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                   SizedBox(
                     height: 20,
                   ),
+                  //title
                   Text(
                     "Order summary",
                     style: TextStyle(
@@ -84,7 +170,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$3000',
+                              '\$ $totalItemPrice',
                               style: TextStyle(
                                 fontSize: 15,
                               ),
@@ -113,7 +199,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$0',
+                              '\$ $shippingCost',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -142,7 +228,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$100',
+                              '\$ $tax',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -171,7 +257,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$2500',
+                              '\$ $total',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -242,13 +328,17 @@ class _PaymentMethodState extends State<PaymentMethod> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PaymentDetails(),
-                        ),
-                      );
+                    onPressed: () async {
+                      //await pr.show();
+
+                      var result = await StripeService.processPayment(
+                          totalToString, 'usd');
+
+                      if (result.success) {
+                        _handleStripeSucessPayment();
+                      } else {
+                        _handleStripeFailurePayment();
+                      }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

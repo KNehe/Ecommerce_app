@@ -8,4 +8,8 @@ class AppProperties {
   static String searchByCategoryOrNameUrl = '$_baseApiUrl/products/search/';
 
   static String searchByCategoryUrl = '$_baseApiUrl/products/search/category/';
+
+  static String saveOrderUrl = '$_baseApiUrl/cart/flutter/stripepayment';
+
+  ///api/v1/cart/flutter/stripepayment
 }
