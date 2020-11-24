@@ -34,7 +34,6 @@ class StripeService {
     try {
       var paymentMethod = await StripePayment.paymentRequestWithCardForm(
           CardFormPaymentRequest());
-      print("Payment $amount $currency");
       var paymentIntent = await StripeService.createPaymentIntent(
         amount,
         currency,

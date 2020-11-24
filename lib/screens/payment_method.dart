@@ -32,7 +32,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
     _shippingController =
         Provider.of<ShippingController>(context, listen: false);
     _orderController = Provider.of<OrderController>(context, listen: false);
-
+    StripeService.init();
     super.initState();
   }
 
@@ -83,7 +83,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
       );
 
       await pr.hide();
-      //_peformStateReset();
+      _peformStateReset();
       Navigator.pushNamed(context, Thanks.id);
     }
 
