@@ -10,8 +10,8 @@ class Thanks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<bool> _onBackPressed() {
-      Navigator.popUntil(
-          context, (route) => route.settings.name == ProductList.id);
+      Navigator.pushNamedAndRemoveUntil(
+          context, ProductList.id, (route) => false);
       return Future.value(true);
     }
 

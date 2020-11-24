@@ -57,6 +57,7 @@ class _ProductListState extends State<ProductList> {
     double _rightMargin = 10;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           "Store",

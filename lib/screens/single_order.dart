@@ -14,8 +14,8 @@ class SingleOrder extends StatefulWidget {
 
 class _SingleOrderState extends State<SingleOrder> {
   Future<bool> _onBackPressed() {
-    Navigator.popUntil(
-        context, (route) => route.settings.name == ProductList.id);
+    Navigator.pushNamedAndRemoveUntil(
+        context, ProductList.id, (route) => false);
     return Future.value(true);
   }
 
