@@ -4,7 +4,6 @@ import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
 import 'package:ecommerceapp/controllers/shipping_controller.dart';
-import 'package:ecommerceapp/screens/payment_details.dart';
 import 'package:ecommerceapp/screens/thank_you.dart';
 import 'package:ecommerceapp/services/paypal_service.dart';
 import 'package:ecommerceapp/services/stripe_service.dart';
@@ -95,6 +94,26 @@ class _PaymentMethodState extends State<PaymentMethod> {
         ),
       );
       await pr.hide();
+    }
+
+    _handlePaypalBrainTree(String nonce) async {
+      var data = await _authController.getUserIdAndLoginStatus();
+
+      _orderController.processOrderWithPaypal(
+        _shippingController.getShippingDetails(),
+        shippingCost.toString(),
+        tax.toString(),
+        total.toString(),
+        totalItemPrice.toString(),
+        data[1],
+        PAY_PAL,
+        _cartController.cart,
+        nonce,
+      );
+
+      await pr.hide();
+      _peformStateReset();
+      Navigator.pushNamed(context, Thanks.id);
     }
 
     return SafeArea(
@@ -292,7 +311,13 @@ class _PaymentMethodState extends State<PaymentMethod> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       onPressed: () async {
-                        await PayPalService.processPayment("14");
+                        await pr.show();
+                        var nonce = await PayPalService.processPayment(
+                            total.toString(), context);
+                        if (nonce != null) {
+                          _handlePaypalBrainTree(nonce);
+                        }
+                        await pr.hide();
                       },
                       child: RichText(
                         text: TextSpan(
@@ -329,7 +354,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     onPressed: () async {
-                      //await pr.show();
+                      await pr.show();
 
                       var result = await StripeService.processPayment(
                           totalToString, 'usd');

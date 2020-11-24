@@ -27,4 +27,10 @@ class OrderService {
     return await httpClient.post(AppProperties.saveOrderUrl,
         body: order, headers: headers);
   }
+
+  Future sendPayPalRequest(String order, String nonce) async {
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+    return await httpClient.post('${AppProperties.payPalRequestUrl}$nonce',
+        body: order, headers: headers);
+  }
 }

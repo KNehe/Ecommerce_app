@@ -63,4 +63,43 @@ class OrderController extends ChangeNotifier {
       print('Order controller Error: $e');
     }
   }
+
+  void processOrderWithPaypal(
+    ShippingDetails shippingDetails,
+    String shippingCost,
+    String tax,
+    String total,
+    String totalItemPrice,
+    String userId,
+    String paymentMethod,
+    List<CartItem> cart,
+    String nonce,
+  ) async {
+    try {
+      var userType = userId != null ? USER_TYPE_RESGISTERED : USER_TYPE_GUEST;
+      var order = Order(
+          shippingDetails: shippingDetails,
+          shippingCost: shippingCost,
+          tax: tax,
+          total: total,
+          totalItemPrice: totalItemPrice,
+          userId: userId,
+          paymentMethod: paymentMethod,
+          userType: userType,
+          dateOrdered: DateTime.now(),
+          cartItems: cart);
+      var orderToJson = order.toJson();
+      var response = await _orderService.sendPayPalRequest(
+          json.encode(orderToJson), nonce);
+
+      if (response.statusCode == 200) {
+        var jsonD = json.decode(response.body);
+        singleOrder = orderFromJson(json.encode(jsonD['data']));
+      } else {
+        print("paypal error");
+      }
+    } catch (e) {
+      print('Order controller Error: $e');
+    }
+  }
 }
