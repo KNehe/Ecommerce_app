@@ -35,6 +35,7 @@ class _ProductListState extends State<ProductList> {
     _productController.getAllProducts();
     Provider.of<CategoryController>(context, listen: false).getAllCategories();
     _cartController = Provider.of<CartController>(context, listen: false);
+    _cartController.getSavedCart();
     _textEditingController.addListener(_handleSearchField);
     _categorySelectedIndex = 0;
   }
@@ -57,6 +58,7 @@ class _ProductListState extends State<ProductList> {
     double _rightMargin = 10;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           "Store",

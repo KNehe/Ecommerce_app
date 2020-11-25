@@ -1,11 +1,18 @@
+import 'package:ecommerceapp/constants/screen_ids.dart';
 import 'package:ecommerceapp/constants/screen_titles.dart';
-import 'package:ecommerceapp/screens/products_list.dart';
+import 'package:ecommerceapp/controllers/auth_controller.dart';
+import 'package:ecommerceapp/screens/shipping.dart';
+import 'package:ecommerceapp/utils/validator.dart';
 import 'package:ecommerceapp/widgets/auth_screen_custom_painter.dart';
+import 'package:ecommerceapp/widgets/dialog.dart';
 import 'package:ecommerceapp/widgets/round_icon_button.dart';
 import 'package:ecommerceapp/widgets/underlined_text..dart';
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
+  //used for navigation using named route
+  static String id = AuthScreen_Id;
+
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
@@ -16,6 +23,20 @@ class _AuthScreenState extends State<AuthScreen> {
   var _formKey = GlobalKey<FormState>();
   var _screenTitle = SignIn_Screen_Title;
   AuthScreenId _authScreenId = AuthScreenId.SignIn_Screen;
+
+  String _email;
+  String _password;
+  String _name;
+
+  var _authController;
+  CDialog _cDialog;
+
+  @override
+  void initState() {
+    _authController = AuthController();
+    _cDialog = CDialog(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +101,16 @@ class _AuthScreenState extends State<AuthScreen> {
               borderSide: BorderSide(color: Colors.black),
             ),
           ),
+          onSaved: (value) => _email = value,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Email is required';
+            }
+            if (!Validator.isEmailValid(value)) {
+              return 'Invalid email';
+            }
+            return null;
+          },
           key: ValueKey("sign_up_email_field"),
         ),
         SizedBox(
@@ -94,6 +125,16 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           obscureText: true,
+          onSaved: (value) => _password = value,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Password is required';
+            }
+            if (value.length < 6) {
+              return "Too short";
+            }
+            return null;
+          },
           key: ValueKey("sign_up_password_field"),
         ),
         SizedBox(
@@ -110,6 +151,14 @@ class _AuthScreenState extends State<AuthScreen> {
               borderSide: BorderSide(color: Colors.black),
             ),
           ),
+          onSaved: (value) => _name = value,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Name is required';
+            }
+
+            return null;
+          },
         ),
         SizedBox(
           height: 10,
@@ -123,6 +172,16 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           keyboardType: TextInputType.emailAddress,
+          onSaved: (value) => _email = value,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Email is required';
+            }
+            if (!Validator.isEmailValid(value)) {
+              return 'Invalid email';
+            }
+            return null;
+          },
         ),
         SizedBox(
           height: 10,
@@ -136,6 +195,16 @@ class _AuthScreenState extends State<AuthScreen> {
             ),
           ),
           obscureText: true,
+          onSaved: (value) => _password = value,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'Password is required';
+            }
+            if (value.length < 6) {
+              return "Too short";
+            }
+            return null;
+          },
         ),
         SizedBox(
           height: 20,
@@ -173,13 +242,22 @@ class _AuthScreenState extends State<AuthScreen> {
               backgroundColor: Color(0xff4b515a),
               iconData: Icons.arrow_forward,
               iconColor: Colors.white,
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductList(),
-                  ),
-                );
+              onPressed: () async {
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+
+                  _cDialog.show();
+
+                  if (await _authController.emailAndPasswordSignIn(
+                    _email,
+                    _password,
+                  )) {
+                    _cDialog.hide();
+                    Navigator.pushReplacementNamed(context, Shipping.id);
+                  } else {
+                    _cDialog.hide();
+                  }
+                }
               },
             ),
           ],
@@ -239,7 +317,24 @@ class _AuthScreenState extends State<AuthScreen> {
               backgroundColor: Color(0xff4b515a),
               iconData: Icons.arrow_forward,
               iconColor: Colors.white,
-              onPressed: () {},
+              onPressed: () async {
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+
+                  _cDialog.show();
+
+                  if (await _authController.emailNameAndPasswordSignUp(
+                    _name,
+                    _email,
+                    _password,
+                  )) {
+                    _cDialog.hide();
+                    Navigator.pushReplacementNamed(context, Shipping.id);
+                  } else {
+                    _cDialog.hide();
+                  }
+                }
+              },
             ),
           ],
         ),

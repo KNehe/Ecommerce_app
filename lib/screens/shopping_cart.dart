@@ -1,11 +1,13 @@
 import 'package:badges/badges.dart';
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/screens/products_list.dart';
 import 'package:ecommerceapp/screens/shipping.dart';
 import 'package:ecommerceapp/widgets/cart_button.dart';
 import 'package:ecommerceapp/widgets/round_cart_button.dart';
+import 'package:ecommerceapp/widgets/shopping_cart_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,10 +23,12 @@ class ShoppingCart extends StatefulWidget {
 class _ShoppingCartState extends State<ShoppingCart> {
   double _rightMargin = 10;
   var _cartController;
+  var _authController;
 
   @override
   void initState() {
     _cartController = Provider.of<CartController>(context, listen: false);
+    _authController = AuthController();
     super.initState();
   }
 
@@ -38,6 +42,31 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   _handleRemoveCartItem(CartItem cartItem) {
     _cartController.removeFromCart(cartItem);
+  }
+
+  _checkoutButtonHandler(BuildContext context) async {
+    var data = await _authController.getUserIdAndLoginStatus();
+    //user is not logged in
+    if (data[1] == null || data[1] == '0') {
+      //provide option to continue as guest or log in
+      Scaffold.of(context).showBottomSheet(
+        (context) => ShoppingCartBottomSheet(),
+      );
+    } else {
+      //check if jwt has expired
+      var isExpired = await _authController.isTokenValid();
+      if (!isExpired) {
+        //provide option to continue as guest or log in
+        Scaffold.of(context).showBottomSheet(
+          (context) =>
+              ShoppingCartBottomSheet(message: 'Login session expired'),
+        );
+      } else {
+        //save cart and contnue
+        _cartController.saveCart(_cartController.cart);
+        Navigator.pushNamed(context, Shipping.id);
+      }
+    }
   }
 
   @override
@@ -258,7 +287,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                           children: [
                             TextSpan(
                               text:
-                                  '\$ ${context.watch<CartController>().cart.fold(0, (previousValue, element) => previousValue + element.product.price)}',
+                                  '\$ ${context.watch<CartController>().cart.fold(0, (previousValue, element) => previousValue + (element.product.price * element.quantity))}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -274,12 +303,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       //checkoout button
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Shipping(),
-                            ),
-                          );
+                          _checkoutButtonHandler(context);
                         },
                         child: Container(
                           decoration: BoxDecoration(
