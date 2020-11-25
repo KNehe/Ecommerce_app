@@ -12,4 +12,8 @@ class AppProperties {
   static String saveOrderUrl = '$_baseApiUrl/cart/flutter/stripepayment';
 
   static String payPalRequestUrl = '$_baseApiUrl/cart/braintree/paypalpayment/';
+
+  static String signUpUrl = '$_baseApiUrl/users/signup';
+
+  static String signInUrl = '$_baseApiUrl/users/signin';
 }

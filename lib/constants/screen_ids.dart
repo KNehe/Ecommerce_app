@@ -5,3 +5,4 @@ const Shipping_Screen_Id = 'ShippingScreen';
 const PaymentMethod_Screen_Id = 'PaymentMethodScreen';
 const ThankYou_Screen_Id = 'ThaankYouScreen';
 const SingleOrder_Screen_Id = 'SingleOrderScreen';
+const AuthScreen_Id = 'AuthScreen';

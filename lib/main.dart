@@ -1,8 +1,10 @@
+import 'package:ecommerceapp/constants/screen_ids.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/controllers/category_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
 import 'package:ecommerceapp/controllers/product_controller.dart';
 import 'package:ecommerceapp/controllers/shipping_controller.dart';
+import 'package:ecommerceapp/screens/auth_screen.dart';
 import 'package:ecommerceapp/screens/payment_method.dart';
 import 'package:ecommerceapp/screens/product_detail.dart';
 import 'package:ecommerceapp/screens/products_list.dart';
@@ -44,6 +46,7 @@ class EcommerceApp extends StatelessWidget {
           PaymentMethod.id: (context) => PaymentMethod(),
           Thanks.id: (context) => Thanks(),
           SingleOrder.id: (context) => SingleOrder(),
+          AuthScreen_Id: (context) => AuthScreen(),
         },
       ),
     );

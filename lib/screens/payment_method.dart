@@ -77,7 +77,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         tax.toString(),
         total.toString(),
         totalItemPrice.toString(),
-        data[1],
+        data[0],
         STRIPE_PAYMENT,
         _cartController.cart,
       );
@@ -105,7 +105,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         tax.toString(),
         total.toString(),
         totalItemPrice.toString(),
-        data[1],
+        data[0],
         PAY_PAL,
         _cartController.cart,
         nonce,

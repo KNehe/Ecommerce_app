@@ -1,3 +1,4 @@
+import 'package:ecommerceapp/screens/auth_screen.dart';
 import 'package:ecommerceapp/screens/shipping.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,9 @@ class ShoppingCartBottomSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(18.0),
             ),
             color: Colors.red[900],
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, AuthScreen.id);
+            },
             child: Text(
               'Sign In',
               style: TextStyle(

@@ -4,6 +4,7 @@ import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/screens/products_list.dart';
+import 'package:ecommerceapp/screens/shipping.dart';
 import 'package:ecommerceapp/widgets/cart_button.dart';
 import 'package:ecommerceapp/widgets/round_cart_button.dart';
 import 'package:ecommerceapp/widgets/shopping_cart_bottom_sheet.dart';
@@ -45,12 +46,18 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   _checkoutButtonHandler(BuildContext context) async {
     var data = await _authController.getUserIdAndLoginStatus();
-    print('status: ${data[1]}');
+    _authController.saveUserIdAndLoginStatus(
+      'd',
+      '0',
+      'k',
+    );
     if (data[1] == null || data[1] == '0') {
       Scaffold.of(context).showBottomSheet(
         (context) => ShoppingCartBottomSheet(),
       );
-    } else {}
+    } else {
+      Navigator.pushNamed(context, Shipping.id);
+    }
   }
 
   @override
