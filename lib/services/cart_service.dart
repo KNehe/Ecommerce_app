@@ -46,4 +46,10 @@ class CartService {
       headers: headers,
     );
   }
+
+  Future deleteCart(
+    String userId,
+  ) async {
+    return await http.delete('${AppProperties.cartUrl}/$userId');
+  }
 }

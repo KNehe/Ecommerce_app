@@ -152,6 +152,7 @@ class CartController extends ChangeNotifier {
 
   resetCart() {
     cart.clear();
+    deleteSavedCart();
   }
 
   saveCart(List<CartItem> cart) async {
@@ -189,6 +190,23 @@ class CartController extends ChangeNotifier {
       }
     } catch (e) {
       print('Get saved cart err ${e.toString()}');
+    }
+  }
+
+  deleteSavedCart() async {
+    try {
+      var authData = await _authController.getUserIdAndLoginStatus();
+      var userId = authData[0];
+
+      var response = await _cartService.deleteCart(userId);
+
+      if (response.statusCode == 204) {
+        print('cart deleted');
+      } else {
+        print('cart not deleted');
+      }
+    } catch (e) {
+      print('Delete saved cart err ${e.toString()}');
     }
   }
 }
