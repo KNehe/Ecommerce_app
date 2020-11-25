@@ -46,17 +46,26 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   _checkoutButtonHandler(BuildContext context) async {
     var data = await _authController.getUserIdAndLoginStatus();
-    _authController.saveUserIdAndLoginStatus(
-      'd',
-      '0',
-      'k',
-    );
+    //user is not logged in
     if (data[1] == null || data[1] == '0') {
+      //provide option to continue as guest or log in
       Scaffold.of(context).showBottomSheet(
         (context) => ShoppingCartBottomSheet(),
       );
     } else {
-      Navigator.pushNamed(context, Shipping.id);
+      //check if jwt has expired
+      var isExpired = await _authController.isTokenValid();
+      if (!isExpired) {
+        //provide option to continue as guest or log in
+        Scaffold.of(context).showBottomSheet(
+          (context) =>
+              ShoppingCartBottomSheet(message: 'Login session expired'),
+        );
+      } else {
+        //save cart and contnue
+        _cartController.saveCart(_cartController.cart);
+        Navigator.pushNamed(context, Shipping.id);
+      }
     }
   }
 

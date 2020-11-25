@@ -16,4 +16,8 @@ class AppProperties {
   static String signUpUrl = '$_baseApiUrl/users/signup';
 
   static String signInUrl = '$_baseApiUrl/users/signin';
+
+  static String checkTokenExpiryUrl = '$_baseApiUrl/users/checktokenexpiry';
+
+  static String cartUrl = '$_baseApiUrl/cart/';
 }

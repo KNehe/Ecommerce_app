@@ -43,4 +43,15 @@ class AuthService {
       headers: headers,
     );
   }
+
+  Future checkTokenExpiry(String token) async {
+    var tokenObject = Map<String, String>();
+    tokenObject.putIfAbsent('token', () => token);
+
+    return await http.post(
+      AppProperties.checkTokenExpiryUrl,
+      body: json.encode(tokenObject),
+      headers: headers,
+    );
+  }
 }

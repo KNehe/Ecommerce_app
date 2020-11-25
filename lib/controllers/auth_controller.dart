@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthController {
   final storage = FlutterSecureStorage();
-  final authService = AuthService();
+  final _authService = AuthService();
 
   saveUserIdAndLoginStatus(
     String userId,
@@ -20,7 +20,8 @@ class AuthController {
   getUserIdAndLoginStatus() async {
     String userId = await storage.read(key: 'UserId');
     String isLoggedFlag = await storage.read(key: 'IsLoggedFlag');
-    return [userId, isLoggedFlag];
+    String token = await storage.read(key: 'jwt');
+    return [userId, isLoggedFlag, token];
   }
 
   deleteUserIdAndLoginStatus() async {
@@ -31,7 +32,7 @@ class AuthController {
       String name, String email, String password) async {
     try {
       var response =
-          await authService.emailNameAndPasswordSignUp(name, email, password);
+          await _authService.emailNameAndPasswordSignUp(name, email, password);
 
       if (response.statusCode == 201) {
         var jsonResponse = json.decode(response.body);
@@ -56,7 +57,7 @@ class AuthController {
 
   Future<bool> emailAndPasswordSignIn(String email, String password) async {
     try {
-      var response = await authService.emailAndPasswordSignIn(email, password);
+      var response = await _authService.emailAndPasswordSignIn(email, password);
 
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
@@ -75,6 +76,21 @@ class AuthController {
       }
     } catch (e) {
       print("Auth service ${e.toString()}");
+      return false;
+    }
+  }
+
+  Future<bool> isTokenValid() async {
+    String token = await storage.read(key: 'jwt');
+
+    if (token.isEmpty) {
+      return false;
+    }
+    var response = await _authService.checkTokenExpiry(token);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
       return false;
     }
   }

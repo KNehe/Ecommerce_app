@@ -3,7 +3,9 @@ import 'package:ecommerceapp/screens/shipping.dart';
 import 'package:flutter/material.dart';
 
 class ShoppingCartBottomSheet extends StatelessWidget {
+  final String message;
   const ShoppingCartBottomSheet({
+    this.message,
     Key key,
   }) : super(key: key);
 
@@ -17,6 +19,12 @@ class ShoppingCartBottomSheet extends StatelessWidget {
         children: [
           SizedBox(
             height: 20,
+          ),
+          Text(
+            "${message != null ? message : ''}",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           RaisedButton(
             elevation: 0,
