@@ -163,4 +163,32 @@ class CartController extends ChangeNotifier {
           productId, authData[0], quantity, authData[2]);
     });
   }
+
+  //get cart from db if it was saved at check out stage
+  //can only be saved if user logged in
+  //can only be loaded if jwt token didn't expire
+  getSavedCart() async {
+    try {
+      var authData = await _authController.getUserIdAndLoginStatus();
+      var userId = authData[0];
+      var jwtToken = authData[2];
+
+      var response = await _cartService.getCart(userId, jwtToken);
+
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        var cartObj = jsonResponse['data']['cart'];
+        cart.addAll(cartItemFromJson(json.encode(cartObj)));
+
+        notifyListeners();
+      } else {
+        //cart isn't updated because it wasn't saved,or jwt expired
+        //that is okay. User can proceed with using the app
+        //will be prompted to either login or continue as guest at checkout stage
+        //else block included for future implementation when required
+      }
+    } catch (e) {
+      print('Get saved cart err ${e.toString()}');
+    }
+  }
 }

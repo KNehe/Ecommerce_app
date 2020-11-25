@@ -35,4 +35,15 @@ class CartService {
       headers: headers,
     );
   }
+
+  Future getCart(
+    String userId,
+    String jwtToken,
+  ) async {
+    headers.putIfAbsent('Authorization', () => 'Bearer $jwtToken');
+    return await http.get(
+      '${AppProperties.cartUrl}/$userId',
+      headers: headers,
+    );
+  }
 }
