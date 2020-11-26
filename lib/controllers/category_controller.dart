@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecommerceapp/models/category.dart';
 import 'package:ecommerceapp/services/category_service.dart';
 import 'dart:convert';
@@ -14,6 +16,9 @@ class CategoryController extends ChangeNotifier {
   void getAllCategories() async {
     try {
       isLoadingCategories = true;
+      //important when refresh indicator is called
+      //to avoid add same items
+      categoryList.clear();
 
       var response = await _categoryService.getCategories();
 
@@ -25,12 +30,19 @@ class CategoryController extends ChangeNotifier {
         notifyListeners();
       } else {
         print("fail ${response.body}");
-        isLoadingCategories = false;
+        //to keep shimmer effect in ui
+        isLoadingCategories = true;
         notifyListeners();
       }
+    } on SocketException catch (e) {
+      //to keep shimmer effect in ui
+      print("no intenrt ${e.message}");
+      isLoadingCategories = true;
+      notifyListeners();
     } catch (e) {
       print("Category load error: ${e.toString()}");
-      isLoadingCategories = false;
+      //to keep shimmer effect in ui
+      isLoadingCategories = true;
       notifyListeners();
     }
   }

@@ -42,11 +42,13 @@ class CartController extends ChangeNotifier {
         }
       } else {
         print('failure');
-        isLoadingProduct = false;
+        //to keep shimmer effect in ui
+        isLoadingProduct = true;
         notifyListeners();
       }
     } catch (e) {
-      isLoadingProduct = false;
+      //to keep shimmer effect in ui
+      isLoadingProduct = true;
       print("Error ${e.toString()}");
       notifyListeners();
     }

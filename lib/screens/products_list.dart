@@ -27,13 +27,16 @@ class _ProductListState extends State<ProductList> {
   int _categorySelectedIndex;
   var _productController;
   var _cartController;
+  var _categoryController;
 
   @override
   void initState() {
     super.initState();
     _productController = Provider.of<ProductController>(context, listen: false);
     _productController.getAllProducts();
-    Provider.of<CategoryController>(context, listen: false).getAllCategories();
+    _categoryController =
+        Provider.of<CategoryController>(context, listen: false);
+    _categoryController.getAllCategories();
     _cartController = Provider.of<CartController>(context, listen: false);
     _cartController.getSavedCart();
     _textEditingController.addListener(_handleSearchField);
@@ -49,6 +52,13 @@ class _ProductListState extends State<ProductList> {
   _handleSearchField() {
     _productController.getProductByCategoryOrName(_textEditingController.text);
     _categorySelectedIndex = null;
+  }
+
+  Future _handleRefresh() {
+    _categoryController.getAllCategories();
+    _productController.getAllProducts();
+    _categorySelectedIndex = 0;
+    return Future.value(true);
   }
 
   @override
@@ -97,49 +107,59 @@ class _ProductListState extends State<ProductList> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 10,
-            ),
-            //search field
-            Container(
-              height: size.height / 15,
-              margin: EdgeInsets.only(left: _leftMargin, right: _rightMargin),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: TextField(
-                controller: _textEditingController,
-                decoration: InputDecoration(
-                  hintText: "Search by product name or category",
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.black,
+            RefreshIndicator(
+              onRefresh: _handleRefresh,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  SizedBox(
+                    height: 10,
                   ),
-                  fillColor: Colors.grey[300],
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
+                  //search field
+                  Container(
+                    height: size.height / 15,
+                    margin:
+                        EdgeInsets.only(left: _leftMargin, right: _rightMargin),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: TextField(
+                      controller: _textEditingController,
+                      decoration: InputDecoration(
+                        hintText: "Search by product name or category",
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Colors.black,
+                        ),
+                        fillColor: Colors.grey[300],
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
 
-            //title
-            Container(
-              margin: EdgeInsets.only(left: _leftMargin),
-              child: Text(
-                "Get The Best Products",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-              ),
-            ),
+                  //title
+                  Container(
+                    margin: EdgeInsets.only(left: _leftMargin),
+                    child: Text(
+                      "Get The Best Products",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                    ),
+                  ),
 
-            SizedBox(
-              height: 30,
+                  SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
             ),
 
             // Horizontal list of categories
