@@ -13,6 +13,7 @@ import 'package:ecommerceapp/screens/shopping_cart.dart';
 import 'package:ecommerceapp/screens/single_order.dart';
 import 'package:ecommerceapp/screens/thank_you.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -22,6 +23,16 @@ void main() {
 class EcommerceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.grey,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.grey,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ProductController()),
@@ -34,7 +45,7 @@ class EcommerceApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Ecommerce app',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.grey,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         initialRoute: ProductList.id,

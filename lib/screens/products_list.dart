@@ -117,16 +117,11 @@ class _ProductListState extends State<ProductList> {
                     color: Colors.black,
                   ),
                   fillColor: Colors.grey[300],
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0,
-                    ),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0,
-                    ),
-                  ),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
                 ),
               ),
             ),
