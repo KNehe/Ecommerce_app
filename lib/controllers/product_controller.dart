@@ -16,6 +16,11 @@ class ProductController extends ChangeNotifier {
   void getAllProducts() async {
     try {
       isLoadingAllProducts = true;
+
+      //important when refresh indicator is called
+      //to avoid add same items
+      productList.clear();
+
       var response = await _productService.getAllProducts();
 
       if (response.statusCode == 200) {
@@ -26,11 +31,13 @@ class ProductController extends ChangeNotifier {
         notifyListeners();
       } else {
         print('failure');
-        isLoadingAllProducts = false;
+        //to keep shimmer effect in ui
+        isLoadingAllProducts = true;
         notifyListeners();
       }
     } catch (e) {
-      isLoadingAllProducts = false;
+      //to keep shimmer effect in ui
+      isLoadingAllProducts = true;
       print("Error ${e.toString()}");
       notifyListeners();
     }

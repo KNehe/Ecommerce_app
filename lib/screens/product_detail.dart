@@ -64,7 +64,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 ),
               );
             }
-            return Text('...');
+            return Text('Loading ...');
           },
         ),
         iconTheme: IconThemeData(color: Colors.black),
