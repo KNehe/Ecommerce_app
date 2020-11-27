@@ -7,21 +7,27 @@ class AuthController {
   final storage = FlutterSecureStorage();
   final _authService = AuthService();
 
-  saveUserIdAndLoginStatus(
+  saveUserDataAndLoginStatus(
     String userId,
     String isLoggedFlag,
     String jwt,
+    String email,
+    String name,
   ) async {
     await storage.write(key: 'UserId', value: userId);
     await storage.write(key: 'IsLoggedFlag', value: isLoggedFlag);
     await storage.write(key: 'jwt', value: jwt);
+    await storage.write(key: 'email', value: email);
+    await storage.write(key: 'name', value: name);
   }
 
-  getUserIdAndLoginStatus() async {
+  getUserDataAndLoginStatus() async {
     String userId = await storage.read(key: 'UserId');
     String isLoggedFlag = await storage.read(key: 'IsLoggedFlag');
     String token = await storage.read(key: 'jwt');
-    return [userId, isLoggedFlag, token];
+    String email = await storage.read(key: 'email');
+    String name = await storage.read(key: 'name');
+    return [userId, isLoggedFlag, token, email, name];
   }
 
   deleteUserIdAndLoginStatus() async {
@@ -38,8 +44,10 @@ class AuthController {
         var jsonResponse = json.decode(response.body);
         var token = jsonResponse['data']['token'];
         var userId = jsonResponse['data']['user']['id'];
+        var email = jsonResponse['data']['user']['email'];
+        var name = jsonResponse['data']['user']['name'];
 
-        await saveUserIdAndLoginStatus(userId, '1', token);
+        await saveUserDataAndLoginStatus(userId, '1', token, email, name);
         return true;
       } else if (response.statusCode == 401) {
         print('error 401 $response');
@@ -63,8 +71,10 @@ class AuthController {
         var jsonResponse = json.decode(response.body);
         var token = jsonResponse['data']['token'];
         var userId = jsonResponse['data']['id'];
-        print('$token $userId');
-        await saveUserIdAndLoginStatus(userId, '1', token);
+        var email = jsonResponse['data']['user']['email'];
+        var name = jsonResponse['data']['user']['name'];
+
+        await saveUserDataAndLoginStatus(userId, '1', token, email, name);
         return true;
       } else if (response.statusCode == 401) {
         print('error 401 $response');

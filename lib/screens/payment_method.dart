@@ -69,7 +69,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
     }
 
     _handleStripeSucessPayment() async {
-      var data = await _authController.getUserIdAndLoginStatus();
+      var data = await _authController.getUserDataAndLoginStatus();
 
       _orderController.registerOrderWithStripePayment(
         _shippingController.getShippingDetails(),
@@ -97,7 +97,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
     }
 
     _handlePaypalBrainTree(String nonce) async {
-      var data = await _authController.getUserIdAndLoginStatus();
+      var data = await _authController.getUserDataAndLoginStatus();
 
       _orderController.processOrderWithPaypal(
         _shippingController.getShippingDetails(),

@@ -111,7 +111,7 @@ class OrderController extends ChangeNotifier {
   void getOrders() async {
     try {
       isLoadingOrders = true;
-      var data = await _authContoller.getUserIdAndLoginStatus();
+      var data = await _authContoller.getUserDataAndLoginStatus();
       var response = await _orderService.getOrders(data[0], data[2]);
       if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);

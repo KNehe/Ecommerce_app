@@ -1,12 +1,14 @@
-import 'package:ecommerceapp/constants/tasks.dart';
 import 'package:ecommerceapp/controllers/activity_tracker_controller.dart';
 import 'package:ecommerceapp/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 
-class GuestUserOrderHistoryWidget extends StatelessWidget {
+class GuestUserDrawerWidget extends StatelessWidget {
   final String message;
-  const GuestUserOrderHistoryWidget({Key key, @required this.message})
+  final String currentTask;
+  const GuestUserDrawerWidget(
+      {Key key, @required this.message, @required this.currentTask})
       : super(key: key);
 
   @override
@@ -36,7 +38,7 @@ class GuestUserOrderHistoryWidget extends StatelessWidget {
               color: Colors.orange,
               onPressed: () {
                 Provider.of<ActivityTracker>(context, listen: false)
-                    .setTaskCurrentTask(VIEWING_ORDER_HISTORY);
+                    .setTaskCurrentTask(currentTask);
                 Navigator.pushReplacementNamed(context, AuthScreen.id);
               },
               child: Text(

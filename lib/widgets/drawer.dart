@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/screens/order_history.dart';
+import 'package:ecommerceapp/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 class CDrawer extends StatefulWidget {
@@ -35,6 +36,7 @@ class _CDrawerState extends State<CDrawer> {
               ),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.pushNamed(context, Profile.id);
               },
             ),
           ),
