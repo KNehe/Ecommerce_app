@@ -22,4 +22,8 @@ class AppProperties {
   static String cartUrl = '$_baseApiUrl/cart/';
 
   static String getOrdersUrl = '$_baseApiUrl/cart/orders/user/';
+
+  static String changenameUrl = '$_baseApiUrl/users/updatename/';
+
+  static String changeMailUrl = '$_baseApiUrl/users/updatemail/';
 }

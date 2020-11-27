@@ -30,7 +30,7 @@ class AuthController {
     return [userId, isLoggedFlag, token, email, name];
   }
 
-  deleteUserIdAndLoginStatus() async {
+  deleteUserDataAndLoginStatus() async {
     await storage.deleteAll();
   }
 
@@ -70,7 +70,7 @@ class AuthController {
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
         var token = jsonResponse['data']['token'];
-        var userId = jsonResponse['data']['id'];
+        var userId = jsonResponse['data']['user']['id'];
         var email = jsonResponse['data']['user']['email'];
         var name = jsonResponse['data']['user']['name'];
 
@@ -101,6 +101,46 @@ class AuthController {
     if (response.statusCode == 200) {
       return true;
     } else {
+      return false;
+    }
+  }
+
+  Future<bool> changeName(String name) async {
+    try {
+      var data = await getUserDataAndLoginStatus();
+
+      var response = await _authService.changeName(name, data[0], data[2]);
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        await storage.write(key: 'name', value: responseBody['data']['name']);
+        return true;
+      } else {
+        print('change name err ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('change name err ${e.toString()}');
+      return false;
+    }
+  }
+
+  Future<bool> changeEmail(String email) async {
+    try {
+      var data = await getUserDataAndLoginStatus();
+
+      var response = await _authService.changeEmail(email, data[0], data[2]);
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        await storage.write(key: 'email', value: responseBody['data']['email']);
+        return true;
+      } else {
+        print('change email err ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('change email err ${e.toString()}');
       return false;
     }
   }

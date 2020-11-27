@@ -54,4 +54,28 @@ class AuthService {
       headers: headers,
     );
   }
+
+  Future changeName(String name, String userId, String jwtToken) async {
+    headers.putIfAbsent('Authorization', () => 'Bearer $jwtToken');
+    var bodyObject = Map<String, String>();
+    bodyObject.putIfAbsent('name', () => name);
+
+    return await http.patch(
+      "${AppProperties.changenameUrl}$userId",
+      headers: headers,
+      body: json.encode(bodyObject),
+    );
+  }
+
+  Future changeEmail(String email, String userId, String jwtToken) async {
+    headers.putIfAbsent('Authorization', () => 'Bearer $jwtToken');
+    var bodyObject = Map<String, String>();
+    bodyObject.putIfAbsent('email', () => email);
+
+    return await http.patch(
+      "${AppProperties.changeMailUrl}$userId",
+      headers: headers,
+      body: json.encode(bodyObject),
+    );
+  }
 }

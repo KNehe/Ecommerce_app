@@ -4,6 +4,7 @@ import 'package:ecommerceapp/constants/tasks.dart';
 import 'package:ecommerceapp/controllers/activity_tracker_controller.dart';
 import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/screens/order_history.dart';
+import 'package:ecommerceapp/screens/profile.dart';
 import 'package:ecommerceapp/screens/shipping.dart';
 import 'package:ecommerceapp/utils/validator.dart';
 import 'package:ecommerceapp/widgets/auth_screen_custom_painter.dart';
@@ -421,6 +422,9 @@ class _AuthScreenState extends State<AuthScreen> {
     switch (_currentTask) {
       case VIEWING_ORDER_HISTORY:
         Navigator.pushReplacementNamed(context, OrderHistroy.id);
+        break;
+      case VIEWING_PROFILE:
+        Navigator.pushReplacementNamed(context, Profile.id);
         break;
       default:
         Navigator.pushReplacementNamed(context, Shipping.id);
