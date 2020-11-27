@@ -1,4 +1,6 @@
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/tasks.dart';
+import 'package:ecommerceapp/controllers/activity_tracker_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
 import 'package:ecommerceapp/controllers/shipping_controller.dart';
 import 'package:ecommerceapp/models/shipping_details.dart';
@@ -194,6 +196,10 @@ class _ShippingState extends State<Shipping> {
                               postalCode: _postalCode,
                               country: _country,
                             );
+
+                            Provider.of<ActivityTracker>(context, listen: false)
+                                .setTaskCurrentTask(
+                                    VIEWING_SINGLE_NEW_ORDER_HISTORY);
 
                             Provider.of<ShippingController>(context,
                                     listen: false)

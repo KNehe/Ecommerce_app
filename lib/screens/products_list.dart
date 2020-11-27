@@ -8,6 +8,7 @@ import 'package:ecommerceapp/screens/shopping_cart.dart';
 import 'package:ecommerceapp/skeletons/category_list_skeleton.dart';
 import 'package:ecommerceapp/skeletons/product_list_skeleton.dart';
 import 'package:ecommerceapp/widgets/category.dart';
+import 'package:ecommerceapp/widgets/drawer.dart';
 import 'package:ecommerceapp/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -251,7 +252,7 @@ class _ProductListState extends State<ProductList> {
           ],
         ),
       ),
-      drawer: Drawer(),
+      drawer: CDrawer(),
     );
   }
 }

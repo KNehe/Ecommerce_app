@@ -83,7 +83,7 @@ class AuthController {
   Future<bool> isTokenValid() async {
     String token = await storage.read(key: 'jwt');
 
-    if (token.isEmpty) {
+    if (token == null || token.isEmpty) {
       return false;
     }
     var response = await _authService.checkTokenExpiry(token);

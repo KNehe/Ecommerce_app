@@ -20,4 +20,6 @@ class AppProperties {
   static String checkTokenExpiryUrl = '$_baseApiUrl/users/checktokenexpiry';
 
   static String cartUrl = '$_baseApiUrl/cart/';
+
+  static String getOrdersUrl = '$_baseApiUrl/cart/orders/user/';
 }
