@@ -49,8 +49,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
     //user is not logged in
     if (data[1] == null || data[1] == '0') {
       //provide option to continue as guest or log in
-      Scaffold.of(context).showBottomSheet(
-        (context) => ShoppingCartBottomSheet(),
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) => ShoppingCartBottomSheet(),
       );
     } else {
       //check if jwt has expired

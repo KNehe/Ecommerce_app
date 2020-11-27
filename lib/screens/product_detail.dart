@@ -5,6 +5,7 @@ import 'package:badges/badges.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/skeletons/product_detail_skeleton.dart';
 import 'package:ecommerceapp/widgets/cart_button.dart';
+import 'package:ecommerceapp/widgets/product_detail_bottomsheet_content.dart';
 import 'package:ecommerceapp/widgets/round_cart_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +32,10 @@ class _ProductDetailState extends State<ProductDetail> {
     if (!_cartCtlr.isItemInCart(_cartCtlr.selectedItem)) {
       _cartCtlr.addToCart(_cartCtlr.selectedItem);
     } else {
-      Scaffold.of(context).showBottomSheet(
-        (context) => ProductDetailBottomSheet(cartCtlr: _cartCtlr),
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) =>
+            ProductDetailBottomSheetContent(cartCtlr: _cartCtlr),
       );
     }
   }
@@ -241,71 +244,6 @@ class _ProductDetailState extends State<ProductDetail> {
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class ProductDetailBottomSheet extends StatelessWidget {
-  const ProductDetailBottomSheet({
-    Key key,
-    @required cartCtlr,
-  })  : _cartCtlr = cartCtlr,
-        super(key: key);
-
-  final _cartCtlr;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      color: Colors.grey[200],
-      child: Column(
-        children: [
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            '${_cartCtlr.selectedItem.product.name} already in cart',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              RaisedButton(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0),
-                    side: BorderSide(color: Colors.red)),
-                color: Colors.red,
-                onPressed: () {
-                  _cartCtlr.removeFromCart(_cartCtlr.selectedItem);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'REMOVE',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Text('OR'),
-              InkWell(
-                child: CartButton(text: 'View cart'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, ShoppingCart.id);
-                },
-              )
-            ],
-          ),
-        ],
       ),
     );
   }
