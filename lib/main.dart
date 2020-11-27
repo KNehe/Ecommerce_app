@@ -9,6 +9,7 @@ import 'package:ecommerceapp/screens/order_history.dart';
 import 'package:ecommerceapp/screens/payment_method.dart';
 import 'package:ecommerceapp/screens/product_detail.dart';
 import 'package:ecommerceapp/screens/products_list.dart';
+import 'package:ecommerceapp/screens/profile.dart';
 import 'package:ecommerceapp/screens/shipping.dart';
 import 'package:ecommerceapp/screens/shopping_cart.dart';
 import 'package:ecommerceapp/screens/single_order.dart';
@@ -61,6 +62,7 @@ class EcommerceApp extends StatelessWidget {
           SingleOrder.id: (context) => SingleOrder(),
           AuthScreen.id: (context) => AuthScreen(),
           OrderHistroy.id: (context) => OrderHistroy(),
+          Profile.id: (context) => Profile()
         },
       ),
     );

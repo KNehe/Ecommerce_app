@@ -45,7 +45,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   _checkoutButtonHandler(BuildContext context) async {
-    var data = await _authController.getUserIdAndLoginStatus();
+    var data = await _authController.getUserDataAndLoginStatus();
     //user is not logged in
     if (data[1] == null || data[1] == '0') {
       //provide option to continue as guest or log in

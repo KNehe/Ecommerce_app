@@ -1,8 +1,9 @@
 import 'package:ecommerceapp/constants/screen_ids.dart';
 import 'package:ecommerceapp/constants/screen_titles.dart';
+import 'package:ecommerceapp/constants/tasks.dart';
 import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
-import 'package:ecommerceapp/widgets/guest_user_order_history_widget.dart';
+import 'package:ecommerceapp/widgets/guest_user_drawer_widget.dart';
 import 'package:ecommerceapp/widgets/no_order_history_content.dart';
 import 'package:ecommerceapp/widgets/order_history_item.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _OrderHistroyState extends State<OrderHistroy> {
   }
 
   Future<List<String>> getLoginStatus() async {
-    return await _authController.getUserIdAndLoginStatus();
+    return await _authController.getUserDataAndLoginStatus();
   }
 
   @override
@@ -75,15 +76,17 @@ class _OrderHistroyState extends State<OrderHistroy> {
 
                 //when user is not signed in
                 if (isLoggedInFlag == null || isLoggedInFlag == '0') {
-                  return GuestUserOrderHistoryWidget(
+                  return GuestUserDrawerWidget(
                     message: 'Sign in to see order history',
+                    currentTask: VIEWING_ORDER_HISTORY,
                   );
                 }
 
                 //when user token has expired
                 if (!isTokenValid) {
-                  return GuestUserOrderHistoryWidget(
+                  return GuestUserDrawerWidget(
                     message: 'Session expired. Sign in to see order history',
+                    currentTask: VIEWING_ORDER_HISTORY,
                   );
                 }
 

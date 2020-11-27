@@ -161,7 +161,7 @@ class CartController extends ChangeNotifier {
     cart.forEach((cartItem) async {
       var productId = cartItem.product.id;
       var quantity = cartItem.quantity.toString();
-      var authData = await _authController.getUserIdAndLoginStatus();
+      var authData = await _authController.getUserDataAndLoginStatus();
       await _cartService.saveCart(
           productId, authData[0], quantity, authData[2]);
     });
@@ -172,7 +172,7 @@ class CartController extends ChangeNotifier {
   //can only be loaded if jwt token didn't expire
   getSavedCart() async {
     try {
-      var authData = await _authController.getUserIdAndLoginStatus();
+      var authData = await _authController.getUserDataAndLoginStatus();
       var userId = authData[0];
       var jwtToken = authData[2];
 
@@ -197,7 +197,7 @@ class CartController extends ChangeNotifier {
 
   deleteSavedCart() async {
     try {
-      var authData = await _authController.getUserIdAndLoginStatus();
+      var authData = await _authController.getUserDataAndLoginStatus();
       var userId = authData[0];
 
       var response = await _cartService.deleteCart(userId);
