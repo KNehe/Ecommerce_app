@@ -5,6 +5,9 @@ import 'package:ecommerceapp/models/shipping_details.dart';
 
 Order orderFromJson(String str) => Order.fromJson(json.decode(str));
 
+List<Order> ordersFromJson(String str) =>
+    List<Order>.from(json.decode(str).map((x) => Order.fromJson(x)));
+
 String orderToJson(Order data) => json.encode(data.toJson());
 
 class Order {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:ecommerceapp/constants/payment.dart';
+import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/models/order.dart';
 import 'package:ecommerceapp/models/shipping_details.dart';
@@ -11,6 +12,10 @@ class OrderController extends ChangeNotifier {
   var shippingCost;
   var tax;
   Order singleOrder;
+  final _authContoller = AuthController();
+  var orders = List<Order>();
+  bool isLoadingOrders = true;
+
   void setShippingCost(String country) async {
     try {
       shippingCost = await _orderService.getShippingCost(country);
@@ -101,5 +106,31 @@ class OrderController extends ChangeNotifier {
     } catch (e) {
       print('Order controller Error: $e');
     }
+  }
+
+  void getOrders() async {
+    try {
+      isLoadingOrders = true;
+      var data = await _authContoller.getUserIdAndLoginStatus();
+      var response = await _orderService.getOrders(data[0], data[2]);
+      if (response.statusCode == 200) {
+        var decodedResponse = json.decode(response.body);
+        orders = ordersFromJson(json.encode(decodedResponse['data']['orders']));
+        isLoadingOrders = false;
+        notifyListeners();
+      } else {
+        orders = [];
+        isLoadingOrders = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      print('error fetchign orders ${e.toString()}');
+      isLoadingOrders = false;
+      notifyListeners();
+    }
+  }
+
+  void setSingleOrder(Order order) {
+    this.singleOrder = order;
   }
 }

@@ -6,3 +6,4 @@ const PaymentMethod_Screen_Id = 'PaymentMethodScreen';
 const ThankYou_Screen_Id = 'ThaankYouScreen';
 const SingleOrder_Screen_Id = 'SingleOrderScreen';
 const AuthScreen_Id = 'AuthScreen';
+const OrderHistoryScreen_Id = 'OrderHistoryScreen';

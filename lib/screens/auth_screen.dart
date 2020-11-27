@@ -1,6 +1,9 @@
 import 'package:ecommerceapp/constants/screen_ids.dart';
 import 'package:ecommerceapp/constants/screen_titles.dart';
+import 'package:ecommerceapp/constants/tasks.dart';
+import 'package:ecommerceapp/controllers/activity_tracker_controller.dart';
 import 'package:ecommerceapp/controllers/auth_controller.dart';
+import 'package:ecommerceapp/screens/order_history.dart';
 import 'package:ecommerceapp/screens/shipping.dart';
 import 'package:ecommerceapp/utils/validator.dart';
 import 'package:ecommerceapp/widgets/auth_screen_custom_painter.dart';
@@ -8,6 +11,7 @@ import 'package:ecommerceapp/widgets/dialog.dart';
 import 'package:ecommerceapp/widgets/round_icon_button.dart';
 import 'package:ecommerceapp/widgets/underlined_text..dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AuthScreen extends StatefulWidget {
   //used for navigation using named route
@@ -253,7 +257,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     _password,
                   )) {
                     _cDialog.hide();
-                    Navigator.pushReplacementNamed(context, Shipping.id);
+                    chooseNextScreen();
                   } else {
                     _cDialog.hide();
                   }
@@ -329,7 +333,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     _password,
                   )) {
                     _cDialog.hide();
-                    Navigator.pushReplacementNamed(context, Shipping.id);
+                    chooseNextScreen();
                   } else {
                     _cDialog.hide();
                   }
@@ -408,5 +412,19 @@ class _AuthScreenState extends State<AuthScreen> {
         ],
       ),
     ];
+  }
+
+  void chooseNextScreen() async {
+    String _currentTask =
+        Provider.of<ActivityTracker>(context, listen: false).currentTask;
+
+    switch (_currentTask) {
+      case VIEWING_ORDER_HISTORY:
+        Navigator.pushReplacementNamed(context, OrderHistroy.id);
+        break;
+      default:
+        Navigator.pushReplacementNamed(context, Shipping.id);
+        break;
+    }
   }
 }

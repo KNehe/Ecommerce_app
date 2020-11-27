@@ -1,4 +1,6 @@
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/tasks.dart';
+import 'package:ecommerceapp/controllers/activity_tracker_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
 import 'package:ecommerceapp/screens/products_list.dart';
 import 'package:flutter/material.dart';
@@ -14,17 +16,24 @@ class SingleOrder extends StatefulWidget {
 
 class _SingleOrderState extends State<SingleOrder> {
   Future<bool> _onBackPressed() {
-    Navigator.pushNamedAndRemoveUntil(
-        context, ProductList.id, (route) => false);
+    if (_currentTask == VIEWING_SINGLE_OLD_ORDER_HISTORY) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+          context, ProductList.id, (route) => false);
+    }
     return Future.value(true);
   }
 
   var orderDetails;
+  var _currentTask;
 
   @override
   void initState() {
     orderDetails =
         Provider.of<OrderController>(context, listen: false).singleOrder;
+    _currentTask =
+        Provider.of<ActivityTracker>(context, listen: false).currentTask;
 
     super.initState();
   }
@@ -208,7 +217,7 @@ class _SingleOrderState extends State<SingleOrder> {
                           elevation: 0,
                           onPressed: () {},
                           child: Text(
-                            "WE'LL CONTACT YOU SHORTLY",
+                            "${_currentTask == VIEWING_SINGLE_OLD_ORDER_HISTORY ? 'Thank you for the support' : "WE'LL CONTACT YOU SHORTLY"}",
                             style: TextStyle(
                               color: Colors.white,
                             ),
