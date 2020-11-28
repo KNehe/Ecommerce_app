@@ -40,7 +40,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    _dialog = CDialog(context);
+    _dialog = CDialog(context).dialog;
 
     return Scaffold(
       key: _scaffoldKey,

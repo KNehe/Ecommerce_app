@@ -35,17 +35,19 @@ class _AuthScreenState extends State<AuthScreen> {
   String _name;
 
   var _authController;
-  CDialog _cDialog;
+
+  var _progressDialog;
 
   @override
   void initState() {
     _authController = AuthController();
-    _cDialog = CDialog(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _progressDialog = CDialog(context).dialog;
+
     var size = MediaQuery.of(context).size;
     var leftMargin = size.width / 10;
 
@@ -137,9 +139,7 @@ class _AuthScreenState extends State<AuthScreen> {
             if (value.isEmpty) {
               return 'Password is required';
             }
-            if (value.length < 6) {
-              return "Too short";
-            }
+
             return null;
           },
           key: ValueKey("sign_up_password_field"),
@@ -253,17 +253,17 @@ class _AuthScreenState extends State<AuthScreen> {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
 
-                  _cDialog.show();
+                  await _progressDialog.show();
 
                   if (await _authController.emailAndPasswordSignIn(
                     _email,
                     _password,
                     _scaffoldKey,
                   )) {
-                    _cDialog.hide();
+                    await _progressDialog.hide();
                     chooseNextScreen();
                   } else {
-                    _cDialog.hide();
+                    await _progressDialog.hide();
                   }
                 }
               },
@@ -329,7 +329,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
 
-                  _cDialog.show();
+                  await _progressDialog.show();
 
                   if (await _authController.emailNameAndPasswordSignUp(
                     _name,
@@ -337,10 +337,10 @@ class _AuthScreenState extends State<AuthScreen> {
                     _password,
                     _scaffoldKey,
                   )) {
-                    _cDialog.hide();
+                    await _progressDialog.hide();
                     chooseNextScreen();
                   } else {
-                    _cDialog.hide();
+                    await _progressDialog.hide();
                   }
                 }
               },

@@ -2,13 +2,14 @@ import 'package:ecommerceapp/constants/payment.dart';
 import 'package:ecommerceapp/constants/screen_ids.dart';
 import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
+import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
 import 'package:ecommerceapp/controllers/shipping_controller.dart';
 import 'package:ecommerceapp/screens/thank_you.dart';
 import 'package:ecommerceapp/services/paypal_service.dart';
 import 'package:ecommerceapp/services/stripe_service.dart';
+import 'package:ecommerceapp/widgets/dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 
 class PaymentMethod extends StatefulWidget {
@@ -25,6 +26,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
   var _shippingController;
   var _orderController;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var _progressDialog;
 
   @override
   void initState() {
@@ -51,16 +53,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
     var total = totalItemPrice + tax + shippingCost;
     String totalToString = total.toString() + '100';
 
-    ProgressDialog pr = ProgressDialog(context);
-    pr = ProgressDialog(
-      context,
-      type: ProgressDialogType.Normal,
-      isDismissible: false,
-      showLogs: false,
-    );
-    pr.style(
-      message: 'Please wait...',
-    );
+    _progressDialog = CDialog(context).dialog;
 
     _peformStateReset() {
       _cartController.resetCart();
@@ -82,7 +75,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         _scaffoldKey,
       );
 
-      await pr.hide();
+      await _progressDialog.hide();
       _peformStateReset();
       Navigator.pushNamed(context, Thanks.id);
     }
@@ -93,7 +86,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
           content: Text('Process cancelled'),
         ),
       );
-      await pr.hide();
+      await _progressDialog.hide();
     }
 
     _handlePaypalBrainTree(String nonce) async {
@@ -112,7 +105,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         _scaffoldKey,
       );
 
-      await pr.hide();
+      await _progressDialog.hide();
       _peformStateReset();
       Navigator.pushNamed(context, Thanks.id);
     }
@@ -312,13 +305,16 @@ class _PaymentMethodState extends State<PaymentMethod> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       onPressed: () async {
-                        await pr.show();
+                        await _progressDialog.show();
                         var nonce = await PayPalService.processPayment(
-                            total.toString(), context);
+                            total.toString());
                         if (nonce != null) {
                           _handlePaypalBrainTree(nonce);
+                        } else {
+                          await _progressDialog.hide();
+                          ErrorController.showCustomError(
+                              _scaffoldKey, 'An error occurred');
                         }
-                        await pr.hide();
                       },
                       child: RichText(
                         text: TextSpan(
@@ -355,7 +351,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     onPressed: () async {
-                      await pr.show();
+                      await _progressDialog.show();
 
                       var result = await StripeService.processPayment(
                           totalToString, 'usd');

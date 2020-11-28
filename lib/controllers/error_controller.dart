@@ -21,6 +21,10 @@ class ErrorController {
     ErrorController()._showErrorSnackbar(scaffoldKey, '${e.toString()}');
   }
 
+  static showCustomError(GlobalKey<ScaffoldState> scaffoldKey, String message) {
+    ErrorController()._showErrorSnackbar(scaffoldKey, message);
+  }
+
   _showErrorSnackbar(GlobalKey<ScaffoldState> scaffoldKey, String message) {
     scaffoldKey.currentState.showSnackBar(SnackBar(
       backgroundColor: Colors.red[900],
