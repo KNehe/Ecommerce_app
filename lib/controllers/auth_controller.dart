@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/services/auth_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthController {
@@ -35,7 +38,11 @@ class AuthController {
   }
 
   Future<bool> emailNameAndPasswordSignUp(
-      String name, String email, String password) async {
+    String name,
+    String email,
+    String password,
+    GlobalKey<ScaffoldState> scaffoldKey,
+  ) async {
     try {
       var response =
           await _authService.emailNameAndPasswordSignUp(name, email, password);
@@ -49,21 +56,28 @@ class AuthController {
 
         await saveUserDataAndLoginStatus(userId, '1', token, email, name);
         return true;
-      } else if (response.statusCode == 401) {
-        print('error 401 $response');
-        return false;
       } else {
-        //error show res.body.message
-        print('error ${response.body}');
+        ErrorController.showErrorFromApi(scaffoldKey, response);
         return false;
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+      return false;
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
+      return false;
     } catch (e) {
-      print("Auth service ${e.toString()}");
+      print("Error ${e.toString()}");
+      ErrorController.showFlutterError(scaffoldKey, e);
       return false;
     }
   }
 
-  Future<bool> emailAndPasswordSignIn(String email, String password) async {
+  Future<bool> emailAndPasswordSignIn(
+    String email,
+    String password,
+    GlobalKey<ScaffoldState> scaffoldKey,
+  ) async {
     try {
       var response = await _authService.emailAndPasswordSignIn(email, password);
 
@@ -76,16 +90,19 @@ class AuthController {
 
         await saveUserDataAndLoginStatus(userId, '1', token, email, name);
         return true;
-      } else if (response.statusCode == 401) {
-        print('error 401 $response');
-        return false;
       } else {
-        //error show res.body.message
-        print('error ${response.body}');
+        ErrorController.showErrorFromApi(scaffoldKey, response);
         return false;
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+      return false;
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
+      return false;
     } catch (e) {
-      print("Auth service ${e.toString()}");
+      print("Error ${e.toString()}");
+      ErrorController.showFlutterError(scaffoldKey, e);
       return false;
     }
   }
@@ -105,7 +122,8 @@ class AuthController {
     }
   }
 
-  Future<bool> changeName(String name) async {
+  Future<bool> changeName(
+      String name, GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       var data = await getUserDataAndLoginStatus();
 
@@ -114,18 +132,27 @@ class AuthController {
       if (response.statusCode == 200) {
         var responseBody = json.decode(response.body);
         await storage.write(key: 'name', value: responseBody['data']['name']);
+
         return true;
       } else {
-        print('change name err ${response.body}');
+        ErrorController.showErrorFromApi(scaffoldKey, response);
         return false;
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+      return false;
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
+      return false;
     } catch (e) {
-      print('change name err ${e.toString()}');
+      print("Error ${e.toString()}");
+      ErrorController.showFlutterError(scaffoldKey, e);
       return false;
     }
   }
 
-  Future<bool> changeEmail(String email) async {
+  Future<bool> changeEmail(
+      String email, GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       var data = await getUserDataAndLoginStatus();
 
@@ -136,11 +163,18 @@ class AuthController {
         await storage.write(key: 'email', value: responseBody['data']['email']);
         return true;
       } else {
-        print('change email err ${response.body}');
+        ErrorController.showErrorFromApi(scaffoldKey, response);
         return false;
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+      return false;
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
+      return false;
     } catch (e) {
-      print('change email err ${e.toString()}');
+      print("Error ${e.toString()}");
+      ErrorController.showFlutterError(scaffoldKey, e);
       return false;
     }
   }

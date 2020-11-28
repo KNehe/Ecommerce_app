@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/models/product.dart';
 import 'package:ecommerceapp/services/product_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class ProductController extends ChangeNotifier {
   final _productService = ProductService();
@@ -13,7 +18,7 @@ class ProductController extends ChangeNotifier {
 
   var isLoadingProduct = true;
 
-  void getAllProducts() async {
+  void getAllProducts(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       isLoadingAllProducts = true;
 
@@ -30,20 +35,20 @@ class ProductController extends ChangeNotifier {
         isLoadingAllProducts = false;
         notifyListeners();
       } else {
-        print('failure');
-        //to keep shimmer effect in ui
-        isLoadingAllProducts = true;
-        notifyListeners();
+        ErrorController.showErrorFromApi(scaffoldKey, response);
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
     } catch (e) {
-      //to keep shimmer effect in ui
-      isLoadingAllProducts = true;
       print("Error ${e.toString()}");
-      notifyListeners();
+      ErrorController.showFlutterError(scaffoldKey, e);
     }
   }
 
-  void getProductByCategory(String value) async {
+  void getProductByCategory(
+      String value, GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       isLoadingAllProducts = true;
 
@@ -62,14 +67,15 @@ class ProductController extends ChangeNotifier {
         isLoadingAllProducts = false;
         notifyListeners();
       } else {
-        print('failure');
-        isLoadingAllProducts = false;
-        notifyListeners();
+        ErrorController.showErrorFromApi(scaffoldKey, response);
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
     } catch (e) {
-      isLoadingAllProducts = false;
       print("Error ${e.toString()}");
-      notifyListeners();
+      ErrorController.showFlutterError(scaffoldKey, e);
     }
   }
 
@@ -93,13 +99,18 @@ class ProductController extends ChangeNotifier {
         isLoadingAllProducts = false;
         notifyListeners();
       } else {
-        print('failure');
-        isLoadingAllProducts = false;
+        isLoadingAllProducts = true;
         notifyListeners();
       }
+    } on SocketException catch (_) {
+      isLoadingAllProducts = true;
+      notifyListeners();
+    } on HttpException catch (_) {
+      isLoadingAllProducts = true;
+      notifyListeners();
     } catch (e) {
-      isLoadingAllProducts = false;
       print("Error ${e.toString()}");
+      isLoadingAllProducts = true;
       notifyListeners();
     }
   }

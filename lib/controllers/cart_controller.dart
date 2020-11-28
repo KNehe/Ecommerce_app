@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ecommerceapp/controllers/auth_controller.dart';
+import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/models/product.dart';
 import 'package:ecommerceapp/services/cart_service.dart';
 import 'package:ecommerceapp/services/product_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class CartController extends ChangeNotifier {
   var cart = List<CartItem>();
@@ -20,7 +23,8 @@ class CartController extends ChangeNotifier {
 
   var _cartService = CartService();
 
-  void setCurrentItem(String productId) async {
+  void setCurrentItem(
+      String productId, GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       isLoadingProduct = true;
       var response = await _productService.getProductById(productId);
@@ -41,16 +45,15 @@ class CartController extends ChangeNotifier {
           notifyListeners();
         }
       } else {
-        print('failure');
-        //to keep shimmer effect in ui
-        isLoadingProduct = true;
-        notifyListeners();
+        ErrorController.showErrorFromApi(scaffoldKey, response);
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
     } catch (e) {
-      //to keep shimmer effect in ui
-      isLoadingProduct = true;
       print("Error ${e.toString()}");
-      notifyListeners();
+      ErrorController.showFlutterError(scaffoldKey, e);
     }
   }
 
@@ -111,7 +114,6 @@ class CartController extends ChangeNotifier {
       if (selectedItem.quantity > 1) {
         selectedItem.quantity--;
         notifyListeners();
-        printCart();
       }
     }
   }
@@ -144,27 +146,23 @@ class CartController extends ChangeNotifier {
     }
   }
 
-  printCart() {
-    for (CartItem item in cart) {
-      print(
-          "name: ${item.product.name}, qty ${item.quantity}, 'sel; ${selectedItem.quantity}");
-    }
-    print("__________________________________________________");
-  }
-
   resetCart() {
     cart.clear();
     deleteSavedCart();
   }
 
-  saveCart(List<CartItem> cart) async {
-    cart.forEach((cartItem) async {
-      var productId = cartItem.product.id;
-      var quantity = cartItem.quantity.toString();
-      var authData = await _authController.getUserDataAndLoginStatus();
-      await _cartService.saveCart(
-          productId, authData[0], quantity, authData[2]);
-    });
+  saveCart(List<CartItem> cart, GlobalKey<ScaffoldState> scaffoldKey) async {
+    try {
+      cart.forEach((cartItem) async {
+        var productId = cartItem.product.id;
+        var quantity = cartItem.quantity.toString();
+        var authData = await _authController.getUserDataAndLoginStatus();
+        await _cartService.saveCart(
+            productId, authData[0], quantity, authData[2]);
+      });
+    } catch (e) {
+      ErrorController.showFlutterError(scaffoldKey, e);
+    }
   }
 
   //get cart from db if it was saved at check out stage
@@ -203,6 +201,8 @@ class CartController extends ChangeNotifier {
       var response = await _cartService.deleteCart(userId);
 
       if (response.statusCode == 204) {
+        //cart is deleted on check out completion
+        //no need to inform user
         print('cart deleted');
       } else {
         print('cart not deleted');

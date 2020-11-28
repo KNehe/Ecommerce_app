@@ -29,15 +29,16 @@ class _ProductListState extends State<ProductList> {
   var _productController;
   var _cartController;
   var _categoryController;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _productController = Provider.of<ProductController>(context, listen: false);
-    _productController.getAllProducts();
+    _productController.getAllProducts(_scaffoldKey);
     _categoryController =
         Provider.of<CategoryController>(context, listen: false);
-    _categoryController.getAllCategories();
+    _categoryController.getAllCategories(_scaffoldKey);
     _cartController = Provider.of<CartController>(context, listen: false);
     _cartController.getSavedCart();
     _textEditingController.addListener(_handleSearchField);
@@ -51,13 +52,15 @@ class _ProductListState extends State<ProductList> {
   }
 
   _handleSearchField() {
-    _productController.getProductByCategoryOrName(_textEditingController.text);
+    _productController.getProductByCategoryOrName(
+      _textEditingController.text,
+    );
     _categorySelectedIndex = null;
   }
 
   Future _handleRefresh() {
-    _categoryController.getAllCategories();
-    _productController.getAllProducts();
+    _categoryController.getAllCategories(_scaffoldKey);
+    _productController.getAllProducts(_scaffoldKey);
     _categorySelectedIndex = 0;
     return Future.value(true);
   }
@@ -69,6 +72,7 @@ class _ProductListState extends State<ProductList> {
     double _rightMargin = 10;
 
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
@@ -189,7 +193,8 @@ class _ProductListState extends State<ProductList> {
                               _categorySelectedIndex = index;
                             });
                             _productController.getProductByCategory(
-                                cateogoryCtlr.categoryList[index].category);
+                                cateogoryCtlr.categoryList[index].category,
+                                _scaffoldKey);
                           },
                         );
                       });
@@ -236,7 +241,7 @@ class _ProductListState extends State<ProductList> {
                         product: productCtlr.productList[index],
                         onProductTapped: () {
                           _cartController.setCurrentItem(
-                              productCtlr.productList[index].id);
+                              productCtlr.productList[index].id, _scaffoldKey);
                           Navigator.pushNamed(context, ProductDetail.id);
                         },
                       );

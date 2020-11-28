@@ -24,6 +24,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   double _rightMargin = 10;
   var _cartController;
   var _authController;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -64,7 +65,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         );
       } else {
         //save cart and contnue
-        _cartController.saveCart(_cartController.cart);
+        _cartController.saveCart(_cartController.cart, _scaffoldKey);
         Navigator.pushNamed(context, Shipping.id);
       }
     }
@@ -73,6 +74,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Shopping cart",

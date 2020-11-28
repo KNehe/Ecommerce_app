@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/models/category.dart';
 import 'package:ecommerceapp/services/category_service.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class CategoryController extends ChangeNotifier {
   final _categoryService = CategoryService();
@@ -13,7 +15,7 @@ class CategoryController extends ChangeNotifier {
 
   var categoryList = List<CategoryModel>();
 
-  void getAllCategories() async {
+  void getAllCategories(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       isLoadingCategories = true;
       //important when refresh indicator is called
@@ -29,21 +31,15 @@ class CategoryController extends ChangeNotifier {
         isLoadingCategories = false;
         notifyListeners();
       } else {
-        print("fail ${response.body}");
-        //to keep shimmer effect in ui
-        isLoadingCategories = true;
-        notifyListeners();
+        ErrorController.showErrorFromApi(scaffoldKey, response);
       }
-    } on SocketException catch (e) {
-      //to keep shimmer effect in ui
-      print("no intenrt ${e.message}");
-      isLoadingCategories = true;
-      notifyListeners();
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
     } catch (e) {
       print("Category load error: ${e.toString()}");
-      //to keep shimmer effect in ui
-      isLoadingCategories = true;
-      notifyListeners();
+      ErrorController.showFlutterError(scaffoldKey, e);
     }
   }
 }
