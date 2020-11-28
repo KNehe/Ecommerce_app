@@ -28,6 +28,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _formKey = GlobalKey<FormState>();
   var _screenTitle = SignIn_Screen_Title;
   AuthScreenId _authScreenId = AuthScreenId.SignIn_Screen;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String _email;
   String _password;
@@ -49,6 +50,7 @@ class _AuthScreenState extends State<AuthScreen> {
     var leftMargin = size.width / 10;
 
     return Scaffold(
+      key: _scaffoldKey,
       body: SafeArea(
         child: ListView(children: [
           Column(
@@ -256,6 +258,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   if (await _authController.emailAndPasswordSignIn(
                     _email,
                     _password,
+                    _scaffoldKey,
                   )) {
                     _cDialog.hide();
                     chooseNextScreen();
@@ -332,6 +335,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     _name,
                     _email,
                     _password,
+                    _scaffoldKey,
                   )) {
                     _cDialog.hide();
                     chooseNextScreen();

@@ -24,6 +24,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
   var _cartController;
   var _shippingController;
   var _orderController;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -61,8 +62,6 @@ class _PaymentMethodState extends State<PaymentMethod> {
       message: 'Please wait...',
     );
 
-    final _scaffoldKey = GlobalKey<ScaffoldState>();
-
     _peformStateReset() {
       _cartController.resetCart();
       _shippingController.reset();
@@ -80,6 +79,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         data[0],
         STRIPE_PAYMENT,
         _cartController.cart,
+        _scaffoldKey,
       );
 
       await pr.hide();
@@ -109,6 +109,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         PAY_PAL,
         _cartController.cart,
         nonce,
+        _scaffoldKey,
       );
 
       await pr.hide();

@@ -20,12 +20,13 @@ class OrderHistroy extends StatefulWidget {
 class _OrderHistroyState extends State<OrderHistroy> {
   var _authController;
   var _orderController;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     _authController = AuthController();
     _orderController = Provider.of<OrderController>(context, listen: false);
-    _orderController.getOrders();
+    _orderController.getOrders(_scaffoldKey);
 
     super.initState();
   }
@@ -40,9 +41,8 @@ class _OrderHistroyState extends State<OrderHistroy> {
 
   @override
   Widget build(BuildContext context) {
-    _orderController.getOrders();
-
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
@@ -99,6 +99,18 @@ class _OrderHistroyState extends State<OrderHistroy> {
                         margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height / 3),
                         child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  if (orderController.orders.length == 0) {
+                    return Center(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height / 3),
+                        child: Text(
+                          'No order made',
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     );
                   }

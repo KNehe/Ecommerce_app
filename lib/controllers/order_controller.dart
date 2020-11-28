@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:ecommerceapp/constants/payment.dart';
 import 'package:ecommerceapp/controllers/auth_controller.dart';
+import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/models/order.dart';
 import 'package:ecommerceapp/models/shipping_details.dart';
 import 'package:ecommerceapp/services/order_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class OrderController extends ChangeNotifier {
   final _orderService = OrderService();
@@ -33,15 +36,15 @@ class OrderController extends ChangeNotifier {
   }
 
   void registerOrderWithStripePayment(
-    ShippingDetails shippingDetails,
-    String shippingCost,
-    String tax,
-    String total,
-    String totalItemPrice,
-    String userId,
-    String paymentMethod,
-    List<CartItem> cart,
-  ) async {
+      ShippingDetails shippingDetails,
+      String shippingCost,
+      String tax,
+      String total,
+      String totalItemPrice,
+      String userId,
+      String paymentMethod,
+      List<CartItem> cart,
+      GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       var userType = userId != null ? USER_TYPE_RESGISTERED : USER_TYPE_GUEST;
       var order = Order(
@@ -62,10 +65,15 @@ class OrderController extends ChangeNotifier {
         var jsonD = json.decode(response.body);
         singleOrder = orderFromJson(json.encode(jsonD['data']));
       } else {
-        print("error");
+        ErrorController.showErrorFromApi(scaffoldKey, response);
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
     } catch (e) {
-      print('Order controller Error: $e');
+      print("Error ${e.toString()}");
+      ErrorController.showFlutterError(scaffoldKey, e);
     }
   }
 
@@ -79,6 +87,7 @@ class OrderController extends ChangeNotifier {
     String paymentMethod,
     List<CartItem> cart,
     String nonce,
+    GlobalKey<ScaffoldState> scaffoldKey,
   ) async {
     try {
       var userType = userId != null ? USER_TYPE_RESGISTERED : USER_TYPE_GUEST;
@@ -101,14 +110,19 @@ class OrderController extends ChangeNotifier {
         var jsonD = json.decode(response.body);
         singleOrder = orderFromJson(json.encode(jsonD['data']));
       } else {
-        print("paypal error");
+        ErrorController.showErrorFromApi(scaffoldKey, response);
       }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
     } catch (e) {
-      print('Order controller Error: $e');
+      print("Error ${e.toString()}");
+      ErrorController.showFlutterError(scaffoldKey, e);
     }
   }
 
-  void getOrders() async {
+  void getOrders(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       isLoadingOrders = true;
       var data = await _authContoller.getUserDataAndLoginStatus();
@@ -119,14 +133,23 @@ class OrderController extends ChangeNotifier {
         isLoadingOrders = false;
         notifyListeners();
       } else {
-        orders = [];
-        isLoadingOrders = false;
+        isLoadingOrders = true;
         notifyListeners();
+        ErrorController.showErrorFromApi(scaffoldKey, response);
       }
-    } catch (e) {
-      print('error fetchign orders ${e.toString()}');
-      isLoadingOrders = false;
+    } on SocketException catch (_) {
+      isLoadingOrders = true;
       notifyListeners();
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      isLoadingOrders = true;
+      notifyListeners();
+      ErrorController.showNoServerError(scaffoldKey);
+    } catch (e) {
+      print('error fetching orders ${e.toString()}');
+      isLoadingOrders = true;
+      notifyListeners();
+      ErrorController.showFlutterError(scaffoldKey, e);
     }
   }
 

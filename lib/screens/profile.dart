@@ -22,6 +22,7 @@ class _ProfileState extends State<Profile> {
   String _email;
   final _saveNameFormKey = GlobalKey<FormState>();
   var _dialog;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _ProfileState extends State<Profile> {
     _dialog = CDialog(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
@@ -324,10 +326,12 @@ class _ProfileState extends State<Profile> {
                               _dialog.show();
 
                               if (task == CHANGING_NAME &&
-                                  await _authController.changeName(_name)) {
+                                  await _authController.changeName(
+                                      _name, _scaffoldKey)) {
                                 resetProfileScreen();
                               } else if (task == CHANGING_EMAIL &&
-                                  await _authController.changeEmail(_email)) {
+                                  await _authController.changeEmail(
+                                      _email, _scaffoldKey)) {
                                 resetProfileScreen();
                               } else {
                                 _dialog.hide();
