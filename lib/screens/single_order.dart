@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/screen_titles.dart';
 import 'package:ecommerceapp/constants/tasks.dart';
 import 'package:ecommerceapp/controllers/activity_tracker_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
@@ -46,7 +47,7 @@ class _SingleOrderState extends State<SingleOrder> {
         child: Scaffold(
             appBar: AppBar(
               title: Text(
-                'Order ${orderDetails.id}',
+                '$SingleOrder_Screen_Title ${orderDetails.id}',
                 style: TextStyle(
                   color: Colors.black,
                 ),

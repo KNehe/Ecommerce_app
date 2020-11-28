@@ -1,5 +1,6 @@
 import 'package:ecommerceapp/constants/payment.dart';
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/screen_titles.dart';
 import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/controllers/error_controller.dart';
@@ -115,7 +116,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
-            'Order summary & Payment method',
+            '$Payment_Screen_Title',
             style: TextStyle(
               color: Colors.black,
             ),

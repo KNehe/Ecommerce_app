@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/screen_titles.dart';
 import 'package:ecommerceapp/constants/tasks.dart';
 import 'package:ecommerceapp/controllers/activity_tracker_controller.dart';
 import 'package:ecommerceapp/controllers/order_controller.dart';
@@ -46,7 +47,7 @@ class _ShippingState extends State<Shipping> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'Shipping details',
+              '$ShippingDetail_Screen_Title',
               style: TextStyle(
                 color: Colors.black,
               ),

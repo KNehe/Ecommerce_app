@@ -1,4 +1,5 @@
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/screen_titles.dart';
 import 'package:ecommerceapp/screens/products_list.dart';
 import 'package:ecommerceapp/screens/single_order.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class Thanks extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'Payment successfull',
+              '$Thanks_Screen_Title',
               style: TextStyle(
                 color: Colors.black,
               ),

@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/screen_titles.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/controllers/category_controller.dart';
 import 'package:ecommerceapp/controllers/product_controller.dart';
@@ -76,7 +77,7 @@ class _ProductListState extends State<ProductList> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          "Store",
+          "$ProductList_Screen_Title",
           style: TextStyle(
             color: Colors.black,
           ),

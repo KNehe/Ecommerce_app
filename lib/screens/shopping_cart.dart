@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/screen_titles.dart';
 import 'package:ecommerceapp/controllers/auth_controller.dart';
 import 'package:ecommerceapp/controllers/cart_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
@@ -77,7 +78,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
-          "Shopping cart",
+          "$ShoppingCart_Screen_Title",
           style: TextStyle(
             color: Colors.black,
             fontSize: 30,
