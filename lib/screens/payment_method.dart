@@ -10,6 +10,7 @@ import 'package:ecommerceapp/screens/thank_you.dart';
 import 'package:ecommerceapp/services/paypal_service.dart';
 import 'package:ecommerceapp/services/stripe_service.dart';
 import 'package:ecommerceapp/widgets/dialog.dart';
+import 'package:ecommerceapp/widgets/global_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -82,12 +83,13 @@ class _PaymentMethodState extends State<PaymentMethod> {
     }
 
     _handleStripeFailurePayment() async {
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text('Process cancelled'),
-        ),
-      );
       await _progressDialog.hide();
+
+      GlobalSnackBar.showSnackbar(
+        _scaffoldKey,
+        'Process cancelled',
+        SnackBarType.Success,
+      );
     }
 
     _handlePaypalBrainTree(String nonce) async {

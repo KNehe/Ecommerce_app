@@ -82,7 +82,6 @@ class AuthService {
   Future forgotPassword(String email) async {
     var bodyObject = Map<String, String>();
     bodyObject.putIfAbsent('email', () => email);
-    print('email: $email');
     return await http.post(
       "${AppProperties.forgotPasswordUrl}",
       headers: headers,

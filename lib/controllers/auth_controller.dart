@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/services/auth_service.dart';
+import 'package:ecommerceapp/widgets/global_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -182,19 +183,16 @@ class AuthController {
   Future<bool> forgotPassword(
       String email, GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
-      print("init mail $email");
       var response = await _authService.forgotPassword(email);
 
       if (response.statusCode == 200) {
         var responseBody = json.decode(response.body);
 
-        scaffoldKey.currentState.showSnackBar(SnackBar(
-          backgroundColor: Colors.red[900],
-          content: Text(
-            '${responseBody['message']}',
-            style: TextStyle(fontSize: 15),
-          ),
-        ));
+        GlobalSnackBar.showSnackbar(
+          scaffoldKey,
+          responseBody['message'],
+          SnackBarType.Success,
+        );
 
         return true;
       } else {

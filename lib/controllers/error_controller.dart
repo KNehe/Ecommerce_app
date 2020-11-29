@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ecommerceapp/widgets/global_snackbar.dart';
 import 'package:flutter/material.dart';
 
 class ErrorController {
@@ -26,13 +27,7 @@ class ErrorController {
   }
 
   _showErrorSnackbar(GlobalKey<ScaffoldState> scaffoldKey, String message) {
-    scaffoldKey.currentState.showSnackBar(SnackBar(
-      backgroundColor: Colors.red[900],
-      content: Text(
-        '$message',
-        style: TextStyle(fontSize: 15),
-      ),
-    ));
+    GlobalSnackBar.showSnackbar(scaffoldKey, message, SnackBarType.Error);
   }
 
   _formatErrorFromApi(String message) {

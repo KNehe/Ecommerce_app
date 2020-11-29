@@ -1,5 +1,3 @@
-import 'package:ecommerceapp/screens/shopping_cart.dart';
-
 const SignIn_Screen_Title = 'Welcome\n Back';
 
 const SignUp_Screen_Title = 'Create\nAccount';
