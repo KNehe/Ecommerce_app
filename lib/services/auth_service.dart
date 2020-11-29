@@ -78,4 +78,15 @@ class AuthService {
       body: json.encode(bodyObject),
     );
   }
+
+  Future forgotPassword(String email) async {
+    var bodyObject = Map<String, String>();
+    bodyObject.putIfAbsent('email', () => email);
+    print('email: $email');
+    return await http.post(
+      "${AppProperties.forgotPasswordUrl}",
+      headers: headers,
+      body: json.encode(bodyObject),
+    );
+  }
 }

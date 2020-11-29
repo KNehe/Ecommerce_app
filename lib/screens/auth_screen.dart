@@ -218,7 +218,7 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ];
     }
-
+    //forogt password input field
     return [
       TextFormField(
         decoration: InputDecoration(
@@ -229,6 +229,16 @@ class _AuthScreenState extends State<AuthScreen> {
           ),
         ),
         keyboardType: TextInputType.emailAddress,
+        onSaved: (value) => _email = value,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Email is required';
+          }
+          if (!Validator.isEmailValid(value)) {
+            return 'Invalid email';
+          }
+          return null;
+        },
       ),
     ];
   }
@@ -273,10 +283,11 @@ class _AuthScreenState extends State<AuthScreen> {
         SizedBox(
           height: 40,
         ),
-        //row with forgot password link
+        //row with sign up and forgot password link
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // sign up link
             GestureDetector(
               child: UnderlinedText(
                 text: 'Sign up',
@@ -291,6 +302,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 });
               },
             ),
+            // forgot password link
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -373,6 +385,7 @@ class _AuthScreenState extends State<AuthScreen> {
       ];
     }
 
+    //forgot password button
     return [
       SizedBox(
         height: 40,
@@ -390,13 +403,26 @@ class _AuthScreenState extends State<AuthScreen> {
             backgroundColor: Color(0xff4b515a),
             iconData: Icons.arrow_forward,
             iconColor: Colors.white,
-            onPressed: () {},
+            onPressed: () async {
+              if (_formKey.currentState.validate()) {
+                _formKey.currentState.save();
+                await _progressDialog.show();
+                if (await _authController.forgotPassword(
+                    _email, _scaffoldKey)) {
+                  await _progressDialog.hide();
+                  _formKey.currentState.reset();
+                } else {
+                  await _progressDialog.hide();
+                }
+              }
+            },
           ),
         ],
       ),
       SizedBox(
         height: 40,
       ),
+      //back to signin link
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

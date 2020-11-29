@@ -26,4 +26,6 @@ class AppProperties {
   static String changenameUrl = '$_baseApiUrl/users/updatename/';
 
   static String changeMailUrl = '$_baseApiUrl/users/updatemail/';
+
+  static String forgotPasswordUrl = '$_baseApiUrl/users/forgotpassword';
 }

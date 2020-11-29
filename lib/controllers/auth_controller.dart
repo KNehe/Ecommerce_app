@@ -178,4 +178,39 @@ class AuthController {
       return false;
     }
   }
+
+  Future<bool> forgotPassword(
+      String email, GlobalKey<ScaffoldState> scaffoldKey) async {
+    try {
+      print("init mail $email");
+      var response = await _authService.forgotPassword(email);
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+
+        scaffoldKey.currentState.showSnackBar(SnackBar(
+          backgroundColor: Colors.red[900],
+          content: Text(
+            '${responseBody['message']}',
+            style: TextStyle(fontSize: 15),
+          ),
+        ));
+
+        return true;
+      } else {
+        ErrorController.showErrorFromApi(scaffoldKey, response);
+        return false;
+      }
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+      return false;
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
+      return false;
+    } catch (e) {
+      print("Error ${e.toString()}");
+      ErrorController.showFlutterError(scaffoldKey, e);
+      return false;
+    }
+  }
 }
