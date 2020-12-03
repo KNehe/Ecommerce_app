@@ -1,5 +1,6 @@
 class AppProperties {
-  static String _baseApiUrl = 'http://10.0.2.2:3000/api/v1';
+  //static String _baseApiUrl = 'http://10.0.2.2:3000/api/v1';
+  static String _baseApiUrl = 'https://nehe-ecommerce-api.herokuapp.com/api/v1';
 
   static String productUrl = '$_baseApiUrl/products/';
 
