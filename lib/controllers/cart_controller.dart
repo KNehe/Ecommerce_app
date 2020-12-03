@@ -51,9 +51,11 @@ class CartController extends ChangeNotifier {
       ErrorController.showNoInternetError(scaffoldKey);
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 
@@ -160,8 +162,14 @@ class CartController extends ChangeNotifier {
         await _cartService.saveCart(
             productId, authData[0], quantity, authData[2]);
       });
+    } on SocketException catch (_) {
+      ErrorController.showNoInternetError(scaffoldKey);
+    } on HttpException catch (_) {
+      ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 

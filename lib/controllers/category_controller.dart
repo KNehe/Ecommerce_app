@@ -37,9 +37,11 @@ class CategoryController extends ChangeNotifier {
       ErrorController.showNoInternetError(scaffoldKey);
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
-      print("Category load error: ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      print("Error ${e.toString()}");
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 }

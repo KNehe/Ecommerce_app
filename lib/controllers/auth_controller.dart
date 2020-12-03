@@ -67,9 +67,12 @@ class AuthController {
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
       return false;
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
+      return false;
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
       return false;
     }
   }
@@ -101,9 +104,12 @@ class AuthController {
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
       return false;
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
+      return false;
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
       return false;
     }
   }
@@ -145,9 +151,12 @@ class AuthController {
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
       return false;
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
+      return false;
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
       return false;
     }
   }
@@ -173,9 +182,12 @@ class AuthController {
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
       return false;
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
+      return false;
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
       return false;
     }
   }
@@ -205,9 +217,12 @@ class AuthController {
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
       return false;
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
+      return false;
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
       return false;
     }
   }
