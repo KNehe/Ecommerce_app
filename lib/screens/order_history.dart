@@ -24,11 +24,10 @@ class _OrderHistroyState extends State<OrderHistroy> {
 
   @override
   void initState() {
+    super.initState();
     _authController = AuthController();
     _orderController = Provider.of<OrderController>(context, listen: false);
     _orderController.getOrders(_scaffoldKey);
-
-    super.initState();
   }
 
   Future<bool> getTokenValidity() async {

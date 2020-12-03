@@ -26,8 +26,8 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
-    _authController = AuthController();
     super.initState();
+    _authController = AuthController();
   }
 
   Future<bool> _getTokenValidity() async {

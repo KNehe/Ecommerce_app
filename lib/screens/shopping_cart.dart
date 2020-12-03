@@ -29,9 +29,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   @override
   void initState() {
+    super.initState();
     _cartController = Provider.of<CartController>(context, listen: false);
     _authController = AuthController();
-    super.initState();
   }
 
   _handleItemQuantityIncrease(CartItem cartItem) {

@@ -31,12 +31,11 @@ class _SingleOrderState extends State<SingleOrder> {
 
   @override
   void initState() {
+    super.initState();
     orderDetails =
         Provider.of<OrderController>(context, listen: false).singleOrder;
     _currentTask =
         Provider.of<ActivityTracker>(context, listen: false).currentTask;
-
-    super.initState();
   }
 
   @override

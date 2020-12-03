@@ -40,8 +40,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   void initState() {
-    _authController = AuthController();
     super.initState();
+    _authController = AuthController();
   }
 
   @override
