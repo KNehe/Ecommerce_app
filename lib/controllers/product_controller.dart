@@ -41,9 +41,11 @@ class ProductController extends ChangeNotifier {
       ErrorController.showNoInternetError(scaffoldKey);
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 
@@ -73,9 +75,11 @@ class ProductController extends ChangeNotifier {
       ErrorController.showNoInternetError(scaffoldKey);
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 

@@ -18,8 +18,14 @@ class ErrorController {
     ErrorController()._showErrorSnackbar(scaffoldKey, 'Failed to reach server');
   }
 
-  static showFlutterError(GlobalKey<ScaffoldState> scaffoldKey, Error e) {
-    ErrorController()._showErrorSnackbar(scaffoldKey, '${e.toString()}');
+  static showFormatExceptionError(
+    GlobalKey<ScaffoldState> scaffoldKey,
+  ) {
+    ErrorController()._showErrorSnackbar(scaffoldKey, 'Bad format error');
+  }
+
+  static showUnKownError(GlobalKey<ScaffoldState> scaffoldKey) {
+    ErrorController()._showErrorSnackbar(scaffoldKey, 'Unknown error');
   }
 
   static showCustomError(GlobalKey<ScaffoldState> scaffoldKey, String message) {

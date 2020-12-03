@@ -47,6 +47,7 @@ class OrderController extends ChangeNotifier {
       GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       var userType = userId != null ? USER_TYPE_RESGISTERED : USER_TYPE_GUEST;
+
       var order = Order(
         shippingDetails: shippingDetails,
         shippingCost: shippingCost,
@@ -59,8 +60,10 @@ class OrderController extends ChangeNotifier {
         dateOrdered: DateTime.now(),
         cartItems: cart,
       );
+
       var orderToJson = order.toJson();
       var response = await _orderService.saveOrder(json.encode(orderToJson));
+
       if (response.statusCode == 200) {
         var jsonD = json.decode(response.body);
         singleOrder = orderFromJson(json.encode(jsonD['data']));
@@ -71,9 +74,11 @@ class OrderController extends ChangeNotifier {
       ErrorController.showNoInternetError(scaffoldKey);
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 
@@ -91,17 +96,20 @@ class OrderController extends ChangeNotifier {
   ) async {
     try {
       var userType = userId != null ? USER_TYPE_RESGISTERED : USER_TYPE_GUEST;
+
       var order = Order(
-          shippingDetails: shippingDetails,
-          shippingCost: shippingCost,
-          tax: tax,
-          total: total,
-          totalItemPrice: totalItemPrice,
-          userId: userId,
-          paymentMethod: paymentMethod,
-          userType: userType,
-          dateOrdered: DateTime.now(),
-          cartItems: cart);
+        shippingDetails: shippingDetails,
+        shippingCost: shippingCost,
+        tax: tax,
+        total: total,
+        totalItemPrice: totalItemPrice,
+        userId: userId,
+        paymentMethod: paymentMethod,
+        userType: userType,
+        dateOrdered: DateTime.now(),
+        cartItems: cart,
+      );
+
       var orderToJson = order.toJson();
       var response = await _orderService.sendPayPalRequest(
           json.encode(orderToJson), nonce);
@@ -116,9 +124,11 @@ class OrderController extends ChangeNotifier {
       ErrorController.showNoInternetError(scaffoldKey);
     } on HttpException catch (_) {
       ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
       print("Error ${e.toString()}");
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 
@@ -145,11 +155,15 @@ class OrderController extends ChangeNotifier {
       isLoadingOrders = true;
       notifyListeners();
       ErrorController.showNoServerError(scaffoldKey);
+    } on FormatException catch (_) {
+      isLoadingOrders = true;
+      notifyListeners();
+      ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
       print('error fetching orders ${e.toString()}');
       isLoadingOrders = true;
       notifyListeners();
-      ErrorController.showFlutterError(scaffoldKey, e);
+      ErrorController.showUnKownError(scaffoldKey);
     }
   }
 
