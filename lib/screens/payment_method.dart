@@ -32,13 +32,13 @@ class _PaymentMethodState extends State<PaymentMethod> {
 
   @override
   void initState() {
+    super.initState();
     _authController = AuthController();
     _cartController = Provider.of<CartController>(context, listen: false);
     _shippingController =
         Provider.of<ShippingController>(context, listen: false);
     _orderController = Provider.of<OrderController>(context, listen: false);
     StripeService.init();
-    super.initState();
   }
 
   @override

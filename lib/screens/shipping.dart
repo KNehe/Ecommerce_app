@@ -22,11 +22,6 @@ class Shipping extends StatefulWidget {
 class _ShippingState extends State<Shipping> {
   var _shippingDdetailsFormkey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   //this is to avoid showing bottom sheet again on previous shopping cart screen
   Future<bool> _onBackPressed() {
     Navigator.popUntil(context, ModalRoute.withName(ShoppingCart.id));
