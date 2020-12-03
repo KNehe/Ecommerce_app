@@ -4,6 +4,11 @@ An ecommerce app built using Flutter
 
 To run open terminal and execute ```flutter run```
 
+## Sample Screenshots
+
+![Alt text](/../screenshots/assets/screenshots/productList.png?raw=true) ![Alt text](/../screenshots/assets/screenshots/shoppingCart.png?raw=true)
+
+
 ## Features
 
 - View products
