@@ -60,8 +60,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
       var isExpired = await _authController.isTokenValid();
       if (!isExpired) {
         //provide option to continue as guest or log in
-        Scaffold.of(context).showBottomSheet(
-          (context) =>
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) =>
               ShoppingCartBottomSheet(message: 'Login session expired'),
         );
       } else {
