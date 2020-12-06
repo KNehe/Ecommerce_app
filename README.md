@@ -6,7 +6,8 @@
 
 ## Sample Screenshots
 
-![Alt text](/../screenshots/assets/screenshots/productList.png?raw=true) ![Alt text](/../screenshots/assets/screenshots/shoppingCart.png?raw=true)
+![Product list screen screenshot](/../screenshots/productList.png?raw=true)   ![Shopping cart screen screenshot](/../screenshots/shoppingCart.png?raw=true)
+
 
 
 ## Features
@@ -38,6 +39,3 @@ If you don't the payment process will always get cancelled. You don't have to do
 It has been tested and works fine with secret added. I removed mine for security reasons. I'm working on a way of including it from backend coupled with encryption so that you don't have to insert your on secret inorder to test the feature. As that is in the pipeline please follow the above mentioned steps.
 
 - This app has been developed on windows and tested on only android using ```Flutter 1.22.4 • channel stable``` and ```  Dart 2.10.4 ```
-
-- Image Network 404 errors have not been handled
-
