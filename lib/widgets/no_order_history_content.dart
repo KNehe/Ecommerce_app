@@ -13,6 +13,7 @@ class NoOrderHistoryFoundContent extends StatelessWidget {
           'No orders found',
           style: TextStyle(
             fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
         SizedBox(height: 10),
@@ -24,7 +25,7 @@ class NoOrderHistoryFoundContent extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          'Or you haven\'t bought item yet',
+          'Or you haven\'t bought any item yet',
           style: TextStyle(
             fontSize: 15,
           ),
