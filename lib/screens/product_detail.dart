@@ -170,6 +170,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   //decrement button
                                   RoundCartButton(
                                     icon: Icons.remove,
+                                    width: size.width * 0.1,
                                     onTap: () {
                                       _handleQuantityDecrease();
                                     },
@@ -186,6 +187,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   // increment button
                                   RoundCartButton(
                                     icon: Icons.add,
+                                    width: size.width * 0.1,
                                     onTap: () {
                                       _handleQuantityIncrease();
                                     },
@@ -200,6 +202,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 },
                                 child: CartButton(
                                   text: "ADD",
+                                  width: size.width * 0.2,
                                 ),
                               )
                             ],
