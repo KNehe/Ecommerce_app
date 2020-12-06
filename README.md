@@ -1,8 +1,8 @@
 # Ecommerce App
 
-An ecommerce app built using Flutter
+- An ecommerce app built using Flutter
 
-To run open terminal and execute ```flutter run```
+- To run open terminal and execute ```flutter run```
 
 ## Sample Screenshots
 

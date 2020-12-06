@@ -24,8 +24,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   void initState() {
-    _cartCtlr = Provider.of<CartController>(context, listen: false);
     super.initState();
+    _cartCtlr = Provider.of<CartController>(context, listen: false);
   }
 
   _handleButtonTap(context) {
