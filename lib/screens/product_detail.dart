@@ -119,15 +119,16 @@ class _ProductDetailState extends State<ProductDetail> {
                     children: [
                       //product image
                       Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                cartCtlr.selectedItem.product.imageUrl),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
                         height: size.width / 2 + 100,
                         width: size.width,
+                        child: Image.network(
+                          cartCtlr.selectedItem.product.imageUrl,
+                          fit: BoxFit.fill,
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace stackTrace) {
+                            return Center(child: Icon(Icons.error));
+                          },
+                        ),
                       ),
 
                       SizedBox(

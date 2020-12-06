@@ -196,12 +196,16 @@ class _ProductListState extends State<ProductList> {
                           categoryIndex: index,
                           categorySelectedIndex: _categorySelectedIndex,
                           onTapped: () {
-                            setState(() {
-                              _categorySelectedIndex = index;
-                            });
-                            _productController.getProductByCategory(
+                            if (cateogoryCtlr.categoryList[index].category !=
+                                null) {
+                              setState(() {
+                                _categorySelectedIndex = index;
+                              });
+                              _productController.getProductByCategory(
                                 cateogoryCtlr.categoryList[index].category,
-                                _scaffoldKey);
+                                _scaffoldKey,
+                              );
+                            }
                           },
                         );
                       });
