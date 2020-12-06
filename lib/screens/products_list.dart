@@ -113,6 +113,7 @@ class _ProductListState extends State<ProductList> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //search field,title
             RefreshIndicator(
               onRefresh: _handleRefresh,
               child: ListView(
@@ -124,8 +125,10 @@ class _ProductListState extends State<ProductList> {
                   //search field
                   Container(
                     height: size.height / 15,
-                    margin:
-                        EdgeInsets.only(left: _leftMargin, right: _rightMargin),
+                    margin: EdgeInsets.only(
+                      left: _leftMargin,
+                      right: _rightMargin,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(50),
@@ -134,6 +137,9 @@ class _ProductListState extends State<ProductList> {
                       controller: _textEditingController,
                       decoration: InputDecoration(
                         hintText: "Search by product name or category",
+                        contentPadding: EdgeInsets.only(
+                          top: 8,
+                        ),
                         prefixIcon: Icon(
                           Icons.search,
                           color: Colors.black,
