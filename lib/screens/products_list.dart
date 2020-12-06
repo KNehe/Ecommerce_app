@@ -268,7 +268,10 @@ class _ProductListState extends State<ProductList> {
           ],
         ),
       ),
-      drawer: CDrawer(),
+      drawer: Container(
+        width: size.width * 0.65,
+        child: CDrawer(),
+      ),
     );
   }
 }
