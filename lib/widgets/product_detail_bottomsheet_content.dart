@@ -53,7 +53,10 @@ class ProductDetailBottomSheetContent extends StatelessWidget {
               ),
               Text('OR'),
               InkWell(
-                child: CartButton(text: 'View cart'),
+                child: CartButton(
+                  text: 'View cart',
+                  width: MediaQuery.of(context).size.width * 0.25,
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, ShoppingCart.id);

@@ -27,7 +27,6 @@ class _OrderHistroyState extends State<OrderHistroy> {
     super.initState();
     _authController = AuthController();
     _orderController = Provider.of<OrderController>(context, listen: false);
-    _orderController.getOrders(_scaffoldKey);
   }
 
   Future<bool> getTokenValidity() async {
@@ -89,6 +88,8 @@ class _OrderHistroyState extends State<OrderHistroy> {
                   );
                 }
 
+                _orderController.getOrders(_scaffoldKey);
+
                 //user is logged in and token is valid
                 return Consumer<OrderController>(
                     builder: (context, orderController, child) {
@@ -106,10 +107,7 @@ class _OrderHistroyState extends State<OrderHistroy> {
                       child: Container(
                         margin: EdgeInsets.only(
                             top: MediaQuery.of(context).size.height / 3),
-                        child: Text(
-                          'No order made',
-                          style: TextStyle(fontSize: 15),
-                        ),
+                        child: NoOrderHistoryFoundContent(),
                       ),
                     );
                   }
@@ -119,16 +117,6 @@ class _OrderHistroyState extends State<OrderHistroy> {
                         shrinkWrap: true,
                         itemCount: orderController.orders.length,
                         itemBuilder: (context, index) {
-                          if (orderController.orders.length == 0) {
-                            return Center(
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                    top:
-                                        MediaQuery.of(context).size.height / 3),
-                                child: NoOrderHistoryFoundContent(),
-                              ),
-                            );
-                          }
                           return OrderHistoryItem(
                             order: orderController.orders[index],
                           );

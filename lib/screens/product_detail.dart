@@ -119,15 +119,16 @@ class _ProductDetailState extends State<ProductDetail> {
                     children: [
                       //product image
                       Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                cartCtlr.selectedItem.product.imageUrl),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
                         height: size.width / 2 + 100,
                         width: size.width,
+                        child: Image.network(
+                          cartCtlr.selectedItem.product.imageUrl,
+                          fit: BoxFit.fill,
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace stackTrace) {
+                            return Center(child: Icon(Icons.error));
+                          },
+                        ),
                       ),
 
                       SizedBox(
@@ -170,6 +171,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   //decrement button
                                   RoundCartButton(
                                     icon: Icons.remove,
+                                    width: size.width * 0.1,
                                     onTap: () {
                                       _handleQuantityDecrease();
                                     },
@@ -186,6 +188,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                   // increment button
                                   RoundCartButton(
                                     icon: Icons.add,
+                                    width: size.width * 0.1,
                                     onTap: () {
                                       _handleQuantityIncrease();
                                     },
@@ -200,6 +203,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                 },
                                 child: CartButton(
                                   text: "ADD",
+                                  width: size.width * 0.2,
                                 ),
                               )
                             ],

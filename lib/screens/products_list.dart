@@ -113,6 +113,7 @@ class _ProductListState extends State<ProductList> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            //search field,title
             RefreshIndicator(
               onRefresh: _handleRefresh,
               child: ListView(
@@ -124,8 +125,10 @@ class _ProductListState extends State<ProductList> {
                   //search field
                   Container(
                     height: size.height / 15,
-                    margin:
-                        EdgeInsets.only(left: _leftMargin, right: _rightMargin),
+                    margin: EdgeInsets.only(
+                      left: _leftMargin,
+                      right: _rightMargin,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(50),
@@ -134,6 +137,9 @@ class _ProductListState extends State<ProductList> {
                       controller: _textEditingController,
                       decoration: InputDecoration(
                         hintText: "Search by product name or category",
+                        contentPadding: EdgeInsets.only(
+                          top: 8,
+                        ),
                         prefixIcon: Icon(
                           Icons.search,
                           color: Colors.black,
@@ -190,12 +196,16 @@ class _ProductListState extends State<ProductList> {
                           categoryIndex: index,
                           categorySelectedIndex: _categorySelectedIndex,
                           onTapped: () {
-                            setState(() {
-                              _categorySelectedIndex = index;
-                            });
-                            _productController.getProductByCategory(
+                            if (cateogoryCtlr.categoryList[index].category !=
+                                null) {
+                              setState(() {
+                                _categorySelectedIndex = index;
+                              });
+                              _productController.getProductByCategory(
                                 cateogoryCtlr.categoryList[index].category,
-                                _scaffoldKey);
+                                _scaffoldKey,
+                              );
+                            }
                           },
                         );
                       });
@@ -258,7 +268,10 @@ class _ProductListState extends State<ProductList> {
           ],
         ),
       ),
-      drawer: CDrawer(),
+      drawer: Container(
+        width: size.width * 0.65,
+        child: CDrawer(),
+      ),
     );
   }
 }

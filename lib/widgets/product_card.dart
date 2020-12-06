@@ -24,6 +24,10 @@ class ProductCard extends StatelessWidget {
               child: Image.network(
                 product.imageUrl,
                 fit: BoxFit.fill,
+                errorBuilder: (BuildContext context, Object exception,
+                    StackTrace stackTrace) {
+                  return Center(child: Icon(Icons.error));
+                },
               ),
             ),
             Padding(
@@ -38,10 +42,10 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    product.name,
+                    product.name ?? '',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(product.price.toString()),
+                  Text(product.price.toString() ?? ''),
                 ],
               ),
             ),

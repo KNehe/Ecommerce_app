@@ -60,8 +60,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
       var isExpired = await _authController.isTokenValid();
       if (!isExpired) {
         //provide option to continue as guest or log in
-        Scaffold.of(context).showBottomSheet(
-          (context) =>
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) =>
               ShoppingCartBottomSheet(message: 'Login session expired'),
         );
       } else {
@@ -74,6 +75,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -140,6 +142,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 height: 20.0,
               ),
 
+              //list of items
               Consumer<CartController>(
                 builder: (context, cartCtlr, child) {
                   if (cartCtlr.cart.length == 0) {
@@ -171,12 +174,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                             ),
                             //particular item
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 //Product image
                                 Container(
                                   height: 150,
-                                  width: 150,
+                                  width: size.width * 0.4,
                                   margin: EdgeInsets.only(
                                     right: 18,
                                     bottom: 18,
@@ -188,68 +191,86 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           '${cartCtlr.cart[index].product.imageUrl}'),
                                       fit: BoxFit.fill,
                                     ),
-                                    color: Colors.red,
                                   ),
                                 ),
 
                                 //increment/decrement buttons, name,price
-                                Column(
-                                  children: [
-                                    // product name
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 5.0),
-                                      child: Text(
-                                        '${cartCtlr.cart[index].product.name}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
+                                Expanded(
+                                  child: Container(
+                                    height: 150,
+                                    margin: EdgeInsets.only(
+                                      top: 10,
                                     ),
-                                    //product price
-                                    Text(
-                                        "\$ ${cartCtlr.cart[index].product.price}"),
-
-                                    //increment/decrement buttons,
-                                    Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        children: [
-                                          RoundCartButton(
-                                            icon: Icons.remove,
-                                            onTap: () {
-                                              _handleItemQuantityDecrease(
-                                                  cartCtlr.cart[index]);
-                                            },
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              '${cartCtlr.cart[index].quantity}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        // product name
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 5.0),
+                                          child: Text(
+                                            '${cartCtlr.cart[index].product.name}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
                                             ),
                                           ),
-                                          RoundCartButton(
-                                            icon: Icons.add,
-                                            onTap: () {
-                                              _handleItemQuantityIncrease(
-                                                  cartCtlr.cart[index]);
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                        ),
+                                        //product price
+                                        Text(
+                                          "\$ ${cartCtlr.cart[index].product.price}",
+                                        ),
 
-                                    //remove from cart button
-                                    GestureDetector(
-                                      onTap: () {
-                                        _handleRemoveCartItem(
-                                            cartCtlr.cart[index]);
-                                      },
-                                      child: CartButton(text: "REMOVE"),
+                                        //increment/decrement buttons,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            RoundCartButton(
+                                              icon: Icons.remove,
+                                              width: size.width * 0.1,
+                                              onTap: () {
+                                                _handleItemQuantityDecrease(
+                                                    cartCtlr.cart[index]);
+                                              },
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 8.0,
+                                                right: 8.0,
+                                              ),
+                                              child: Text(
+                                                '${cartCtlr.cart[index].quantity}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            RoundCartButton(
+                                              icon: Icons.add,
+                                              width: size.width * 0.1,
+                                              onTap: () {
+                                                _handleItemQuantityIncrease(
+                                                    cartCtlr.cart[index]);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+
+                                        //remove from cart button
+                                        GestureDetector(
+                                          onTap: () {
+                                            _handleRemoveCartItem(
+                                                cartCtlr.cart[index]);
+                                          },
+                                          child: CartButton(
+                                            text: "REMOVE",
+                                            width: size.width * 0.25,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
