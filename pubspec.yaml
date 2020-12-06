@@ -23,6 +23,24 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^0.12.2
+  stripe_payment: ^1.0.8
+  flutter_braintree: ^1.1.0
+  shimmer: ^1.1.2
+  provider: ^4.3.2+2
+  badges: ^1.1.4
+  flutter_secure_storage: ^3.3.5
+  progress_dialog: ^1.2.4
+
+
+  
+
+
+
+
+
+
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -32,6 +50,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockito: ^4.1.3
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

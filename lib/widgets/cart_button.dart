@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 
 class CartButton extends StatelessWidget {
   final String text;
+  final double width;
+
   const CartButton({
     Key key,
     @required this.text,
+    @required this.width,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
+      width: width,
       decoration: BoxDecoration(
         color: Colors.orange,
         borderRadius: BorderRadius.circular(50),

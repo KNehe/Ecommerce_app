@@ -1,22 +1,124 @@
-import 'package:ecommerceapp/screens/payment_details.dart';
+import 'package:ecommerceapp/constants/payment.dart';
+import 'package:ecommerceapp/constants/screen_ids.dart';
+import 'package:ecommerceapp/constants/screen_titles.dart';
+import 'package:ecommerceapp/controllers/auth_controller.dart';
+import 'package:ecommerceapp/controllers/cart_controller.dart';
+import 'package:ecommerceapp/controllers/error_controller.dart';
+import 'package:ecommerceapp/controllers/order_controller.dart';
+import 'package:ecommerceapp/controllers/shipping_controller.dart';
+import 'package:ecommerceapp/screens/thank_you.dart';
+import 'package:ecommerceapp/services/paypal_service.dart';
+import 'package:ecommerceapp/services/stripe_service.dart';
+import 'package:ecommerceapp/widgets/dialog.dart';
+import 'package:ecommerceapp/widgets/global_snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PaymentMethod extends StatefulWidget {
   PaymentMethod({Key key}) : super(key: key);
+  static String id = PaymentMethod_Screen_Id;
 
   @override
   _PaymentMethodState createState() => _PaymentMethodState();
 }
 
 class _PaymentMethodState extends State<PaymentMethod> {
+  var _authController;
+  var _cartController;
+  var _shippingController;
+  var _orderController;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var _progressDialog;
+
+  @override
+  void initState() {
+    super.initState();
+    _authController = AuthController();
+    _cartController = Provider.of<CartController>(context, listen: false);
+    _shippingController =
+        Provider.of<ShippingController>(context, listen: false);
+    _orderController = Provider.of<OrderController>(context, listen: false);
+    StripeService.init();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
+    var totalItemPrice = _cartController.cart.fold(
+        0,
+        (previousValue, element) =>
+            previousValue + (element.product.price * element.quantity));
+    int tax = _orderController.tax;
+    int shippingCost = _orderController.shippingCost;
+
+    var total = totalItemPrice + tax + shippingCost;
+    String totalToString = total.toString() + '100';
+
+    _progressDialog = CDialog(context).dialog;
+
+    _peformStateReset() {
+      _cartController.resetCart();
+      _shippingController.reset();
+    }
+
+    _handleStripeSucessPayment() async {
+      var data = await _authController.getUserDataAndLoginStatus();
+
+      _orderController.registerOrderWithStripePayment(
+        _shippingController.getShippingDetails(),
+        shippingCost.toString(),
+        tax.toString(),
+        total.toString(),
+        totalItemPrice.toString(),
+        data[0],
+        STRIPE_PAYMENT,
+        _cartController.cart,
+        _scaffoldKey,
+      );
+
+      await _progressDialog.hide();
+      _peformStateReset();
+      Navigator.pushNamed(context, Thanks.id);
+    }
+
+    _handleStripeFailurePayment() async {
+      await _progressDialog.hide();
+
+      GlobalSnackBar.showSnackbar(
+        _scaffoldKey,
+        'Process cancelled',
+        SnackBarType.Success,
+      );
+    }
+
+    _handlePaypalBrainTree(String nonce) async {
+      var data = await _authController.getUserDataAndLoginStatus();
+
+      _orderController.processOrderWithPaypal(
+        _shippingController.getShippingDetails(),
+        shippingCost.toString(),
+        tax.toString(),
+        total.toString(),
+        totalItemPrice.toString(),
+        data[0],
+        PAY_PAL,
+        _cartController.cart,
+        nonce,
+        _scaffoldKey,
+      );
+
+      await _progressDialog.hide();
+      _peformStateReset();
+      Navigator.pushNamed(context, Thanks.id);
+    }
+
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
-            'Order summary & Payment method',
+            '$Payment_Screen_Title',
             style: TextStyle(
               color: Colors.black,
             ),
@@ -39,6 +141,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                   SizedBox(
                     height: 20,
                   ),
+                  //title
                   Text(
                     "Order summary",
                     style: TextStyle(
@@ -83,7 +186,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$3000',
+                              '\$ $totalItemPrice',
                               style: TextStyle(
                                 fontSize: 15,
                               ),
@@ -112,7 +215,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$0',
+                              '\$ $shippingCost',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -141,7 +244,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$100',
+                              '\$ $tax',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -170,7 +273,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                               bottom: 10.0,
                             ),
                             child: Text(
-                              '\$2500',
+                              '\$ $total',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -204,8 +307,17 @@ class _PaymentMethodState extends State<PaymentMethod> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () {
-                        print('f');
+                      onPressed: () async {
+                        await _progressDialog.show();
+                        var nonce = await PayPalService.processPayment(
+                            total.toString());
+                        if (nonce != null) {
+                          _handlePaypalBrainTree(nonce);
+                        } else {
+                          await _progressDialog.hide();
+                          ErrorController.showCustomError(
+                              _scaffoldKey, 'An error occurred');
+                        }
                       },
                       child: RichText(
                         text: TextSpan(
@@ -241,13 +353,17 @@ class _PaymentMethodState extends State<PaymentMethod> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PaymentDetails(),
-                        ),
-                      );
+                    onPressed: () async {
+                      await _progressDialog.show();
+
+                      var result = await StripeService.processPayment(
+                          totalToString, 'usd');
+
+                      if (result.success) {
+                        _handleStripeSucessPayment();
+                      } else {
+                        _handleStripeFailurePayment();
+                      }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
