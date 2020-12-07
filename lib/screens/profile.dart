@@ -20,7 +20,7 @@ class _ProfileState extends State<Profile> {
   var _authController;
   String _name;
   String _email;
-  final _saveNameFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _saveNameFormKey = GlobalKey<FormState>();
   var _dialog;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -160,9 +160,12 @@ class _ProfileState extends State<Profile> {
                                     _handleEditIconClick(
                                         context, CHANGING_NAME);
                                   },
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: Colors.orange,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.orange,
+                                    ),
                                   ),
                                 )
                               ],
@@ -201,9 +204,12 @@ class _ProfileState extends State<Profile> {
                                     _handleEditIconClick(
                                         context, CHANGING_EMAIL);
                                   },
-                                  child: Icon(
-                                    Icons.edit,
-                                    color: Colors.orange,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.orange,
+                                    ),
                                   ),
                                 )
                               ],
