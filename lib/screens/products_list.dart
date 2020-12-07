@@ -269,7 +269,7 @@ class _ProductListState extends State<ProductList> {
         ),
       ),
       drawer: Container(
-        width: size.width * 0.65,
+        width: size.width * 0.8,
         child: CDrawer(),
       ),
     );
