@@ -192,6 +192,32 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       fit: BoxFit.fill,
                                     ),
                                   ),
+                                  child: Image.network(
+                                    '${cartCtlr.cart[index].product.imageUrl}',
+                                    fit: BoxFit.fill,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace stackTrace) {
+                                      return Center(child: Icon(Icons.error));
+                                    },
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
 
                                 //increment/decrement buttons, name,price
