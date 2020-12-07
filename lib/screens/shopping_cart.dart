@@ -185,12 +185,32 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                     bottom: 18,
                                     top: 10,
                                   ),
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                          '${cartCtlr.cart[index].product.imageUrl}'),
-                                      fit: BoxFit.fill,
-                                    ),
+                                  child: Image.network(
+                                    '${cartCtlr.cart[index].product.imageUrl}',
+                                    fit: BoxFit.fill,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace stackTrace) {
+                                      return Center(child: Icon(Icons.error));
+                                    },
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.0,
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes
+                                              : null,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
 

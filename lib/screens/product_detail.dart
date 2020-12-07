@@ -128,6 +128,20 @@ class _ProductDetailState extends State<ProductDetail> {
                               StackTrace stackTrace) {
                             return Center(child: Icon(Icons.error));
                           },
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.0,
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes
+                                    : null,
+                              ),
+                            );
+                          },
                         ),
                       ),
 
