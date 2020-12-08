@@ -26,6 +26,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   var _cartController;
   var _authController;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isProcessingCheckout = false;
 
   @override
   void initState() {
@@ -47,6 +48,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   _checkoutButtonHandler(BuildContext context) async {
+    _toggleIsProcessingCheckout();
+
     var data = await _authController.getUserDataAndLoginStatus();
     //user is not logged in
     if (data[1] == null || data[1] == '0') {
@@ -55,22 +58,33 @@ class _ShoppingCartState extends State<ShoppingCart> {
         context: context,
         builder: (BuildContext context) => ShoppingCartBottomSheet(),
       );
+
+      _toggleIsProcessingCheckout();
     } else {
+      var isValid = await _authController.isTokenValid();
+
       //check if jwt has expired
-      var isExpired = await _authController.isTokenValid();
-      if (!isExpired) {
+      if (!isValid) {
         //provide option to continue as guest or log in
         showModalBottomSheet(
           context: context,
           builder: (BuildContext context) =>
               ShoppingCartBottomSheet(message: 'Login session expired'),
         );
+        _toggleIsProcessingCheckout();
       } else {
         //save cart and contnue
         _cartController.saveCart(_cartController.cart, _scaffoldKey);
-        Navigator.pushNamed(context, Shipping.id);
+        await Navigator.pushNamed(context, Shipping.id);
+        _toggleIsProcessingCheckout();
       }
     }
+  }
+
+  _toggleIsProcessingCheckout() {
+    setState(() {
+      isProcessingCheckout = !isProcessingCheckout;
+    });
   }
 
   @override
@@ -306,7 +320,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
               ),
 
               SizedBox(
-                height: 20.0,
+                height: 25.0,
               ),
 
               //total and checkout button
@@ -348,36 +362,41 @@ class _ShoppingCartState extends State<ShoppingCart> {
                       //checkoout button
                       GestureDetector(
                         onTap: () {
-                          _checkoutButtonHandler(context);
+                          if (!isProcessingCheckout) {
+                            _checkoutButtonHandler(context);
+                          }
                         },
                         child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black87,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                            top: 8,
-                            bottom: 8,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                "CHECKOUT",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
+                            decoration: BoxDecoration(
+                              color: Colors.red[900],
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            padding: EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 8,
+                              bottom: 8,
+                            ),
+                            child: isProcessingCheckout
+                                ? CircularProgressIndicator(
+                                    backgroundColor: Colors.white,
+                                  )
+                                : Row(
+                                    children: [
+                                      Text(
+                                        "CHECKOUT",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  )),
                       ),
                     ],
                   );
@@ -385,7 +404,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
               ),
 
               SizedBox(
-                height: 15.0,
+                height: 30.0,
               ),
             ],
           ),
