@@ -6,7 +6,12 @@
 
 ## Sample Screenshots
 
-![Product list screen screenshot](/../screenshots/productList.png?raw=true)   ![Shopping cart screen screenshot](/../screenshots/shoppingCart.png?raw=true)
+<table>
+  <tr>
+    <td><img src="/../screenshots/productList.png" width=270 height=480></td>
+    <td><img src="/../screenshots/shoppingCart.png" width=270 height=480></td>
+  </tr>
+ </table>
 
 
 
