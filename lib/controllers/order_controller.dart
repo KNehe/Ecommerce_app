@@ -35,6 +35,10 @@ class OrderController extends ChangeNotifier {
 
   get shippingCost => _shippingCost;
 
+  bool _isProcessingOrder = true;
+
+  get isProcessingOrder => _isProcessingOrder;
+
   void setShippingCost(String country) async {
     try {
       _shippingCost = await _orderService.getShippingCost(country);
@@ -83,6 +87,8 @@ class OrderController extends ChangeNotifier {
       if (response.statusCode == 200) {
         var jsonD = json.decode(response.body);
         _singleOrder = orderFromJson(json.encode(jsonD['data']));
+        _isProcessingOrder = false;
+        notifyListeners();
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);
       }
@@ -133,6 +139,8 @@ class OrderController extends ChangeNotifier {
       if (response.statusCode == 200) {
         var jsonD = json.decode(response.body);
         _singleOrder = orderFromJson(json.encode(jsonD['data']));
+        _isProcessingOrder = false;
+        notifyListeners();
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);
       }
