@@ -6,14 +6,11 @@ import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/models/product.dart';
 import 'package:ecommerceapp/services/cart_service.dart';
-import 'package:ecommerceapp/services/product_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CartController extends ChangeNotifier {
   var _cart = List<CartItem>();
-
-  final _productService = ProductService();
 
   bool _isLoadingProduct = true;
 
@@ -29,39 +26,20 @@ class CartController extends ChangeNotifier {
 
   CartItem get selectedItem => _selectedItem;
 
-  void setCurrentItem(
-      String productId, GlobalKey<ScaffoldState> scaffoldKey) async {
-    try {
-      _isLoadingProduct = true;
-      var response = await _productService.getProductById(productId);
+  void setCurrentItem(Product product) async {
+    _isLoadingProduct = true;
 
-      if (response.statusCode == 200) {
-        var responseJsonStr = json.decode(response.body);
-        var jsonProd = responseJsonStr['data']['product'];
-        var product = Product.fromJson(jsonProd);
-        var item = CartItem(product: product, quantity: 1);
-        if (isItemInCart(item)) {
-          var foundItem = getCartItem(item);
-          _selectedItem = foundItem;
-          _isLoadingProduct = false;
-          notifyListeners();
-        } else {
-          _selectedItem = CartItem(product: product, quantity: 1);
-          _isLoadingProduct = false;
-          notifyListeners();
-        }
-      } else {
-        ErrorController.showErrorFromApi(scaffoldKey, response);
-      }
-    } on SocketException catch (_) {
-      ErrorController.showNoInternetError(scaffoldKey);
-    } on HttpException catch (_) {
-      ErrorController.showNoServerError(scaffoldKey);
-    } on FormatException catch (_) {
-      ErrorController.showFormatExceptionError(scaffoldKey);
-    } catch (e) {
-      print("Error ${e.toString()}");
-      ErrorController.showUnKownError(scaffoldKey);
+    var item = CartItem(product: product, quantity: 1);
+
+    if (isItemInCart(item)) {
+      var foundItem = getCartItem(item);
+      _selectedItem = foundItem;
+      _isLoadingProduct = false;
+      notifyListeners();
+    } else {
+      _selectedItem = CartItem(product: product, quantity: 1);
+      _isLoadingProduct = false;
+      notifyListeners();
     }
   }
 
@@ -225,4 +203,44 @@ class CartController extends ChangeNotifier {
       print('Delete saved cart err ${e.toString()}');
     }
   }
+
+  //REQUIRED IF YOU NEED TO FETCH PRODUCT BY ID  FROM API AND SET SELECTED ITEM
+
+  // void setCurrentItem(
+  //     String productId, GlobalKey<ScaffoldState> scaffoldKey) async {
+  //   try {
+  //     _isLoadingProduct = true;
+
+  //     var response = await _productService.getProductById(productId);
+
+  //     if (response.statusCode == 200) {
+  //       var responseJsonStr = json.decode(response.body);
+  //       var jsonProd = responseJsonStr['data']['product'];
+  //       var product = Product.fromJson(jsonProd);
+  //       var item = CartItem(product: product, quantity: 1);
+  //       if (isItemInCart(item)) {
+  //         var foundItem = getCartItem(item);
+  //         _selectedItem = foundItem;
+  //         _isLoadingProduct = false;
+  //         notifyListeners();
+  //       } else {
+  //         _selectedItem = CartItem(product: product, quantity: 1);
+  //         _isLoadingProduct = false;
+  //         notifyListeners();
+  //       }
+  //     } else {
+  //       ErrorController.showErrorFromApi(scaffoldKey, response);
+  //     }
+  //   } on SocketException catch (_) {
+  //     ErrorController.showNoInternetError(scaffoldKey);
+  //   } on HttpException catch (_) {
+  //     ErrorController.showNoServerError(scaffoldKey);
+  //   } on FormatException catch (_) {
+  //     ErrorController.showFormatExceptionError(scaffoldKey);
+  //   } catch (e) {
+  //     print("Error ${e.toString()}");
+  //     ErrorController.showUnKownError(scaffoldKey);
+  //   }
+  // }
+
 }

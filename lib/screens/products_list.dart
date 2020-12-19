@@ -251,8 +251,8 @@ class _ProductListState extends State<ProductList> {
                       return ProductCard(
                         product: productCtlr.productList[index],
                         onProductTapped: () {
-                          _cartController.setCurrentItem(
-                              productCtlr.productList[index].id, _scaffoldKey);
+                          _cartController
+                              .setCurrentItem(productCtlr.productList[index]);
                           Navigator.pushNamed(context, ProductDetail.id);
                         },
                       );
