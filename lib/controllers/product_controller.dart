@@ -12,27 +12,28 @@ import 'package:flutter/material.dart';
 class ProductController extends ChangeNotifier {
   final _productService = ProductService();
 
-  var productList = List<Product>();
+  var _productList = List<Product>();
 
-  var isLoadingAllProducts = true;
+  bool _isLoadingAllProducts = true;
 
-  var isLoadingProduct = true;
+  bool get isLoadingAllProducts => _isLoadingAllProducts;
 
   void getAllProducts(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
-      isLoadingAllProducts = true;
+      _isLoadingAllProducts = true;
 
       //important when refresh indicator is called
       //to avoid add same items
-      productList.clear();
+      _productList.clear();
 
       var response = await _productService.getAllProducts();
 
       if (response.statusCode == 200) {
         var responseJsonStr = json.decode(response.body);
         var jsonProd = responseJsonStr['data']['products'];
-        productList.addAll(productFromJson(json.encode(jsonProd)));
-        isLoadingAllProducts = false;
+        _productList.addAll(productFromJson(json.encode(jsonProd)));
+        _isLoadingAllProducts = false;
+
         notifyListeners();
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);
@@ -49,10 +50,12 @@ class ProductController extends ChangeNotifier {
     }
   }
 
+  List<Product> get productList => _productList;
+
   void getProductByCategory(
       String value, GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
-      isLoadingAllProducts = true;
+      _isLoadingAllProducts = true;
 
       var response = value == 'All'
           ? await _productService.getAllProducts()
@@ -64,9 +67,10 @@ class ProductController extends ChangeNotifier {
             ? responseJsonStr['data']['products']
             : responseJsonStr['data']['result'];
 
-        productList.clear();
-        productList.addAll(productFromJson(json.encode(jsonProd)));
-        isLoadingAllProducts = false;
+        _productList.clear();
+        _productList.addAll(productFromJson(json.encode(jsonProd)));
+        _isLoadingAllProducts = false;
+
         notifyListeners();
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);
@@ -86,7 +90,7 @@ class ProductController extends ChangeNotifier {
   void getProductByCategoryOrName(String value) async {
     var finalSearchValue = value.trim();
     try {
-      isLoadingAllProducts = true;
+      _isLoadingAllProducts = true;
 
       var response = finalSearchValue == ''
           ? await _productService.getAllProducts()
@@ -98,23 +102,23 @@ class ProductController extends ChangeNotifier {
             ? responseJsonStr['data']['products']
             : responseJsonStr['data']['result'];
 
-        productList.clear();
-        productList.addAll(productFromJson(json.encode(jsonProd)));
-        isLoadingAllProducts = false;
+        _productList.clear();
+        _productList.addAll(productFromJson(json.encode(jsonProd)));
+        _isLoadingAllProducts = false;
         notifyListeners();
       } else {
-        isLoadingAllProducts = true;
+        _isLoadingAllProducts = true;
         notifyListeners();
       }
     } on SocketException catch (_) {
-      isLoadingAllProducts = true;
+      _isLoadingAllProducts = true;
       notifyListeners();
     } on HttpException catch (_) {
-      isLoadingAllProducts = true;
+      _isLoadingAllProducts = true;
       notifyListeners();
     } catch (e) {
       print("Error ${e.toString()}");
-      isLoadingAllProducts = true;
+      _isLoadingAllProducts = true;
       notifyListeners();
     }
   }

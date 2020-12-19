@@ -11,22 +11,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CartController extends ChangeNotifier {
-  var cart = List<CartItem>();
+  var _cart = List<CartItem>();
 
   final _productService = ProductService();
 
-  bool isLoadingProduct = true;
+  bool _isLoadingProduct = true;
 
-  CartItem selectedItem = CartItem();
+  CartItem _selectedItem = CartItem();
 
   var _authController = AuthController();
 
   var _cartService = CartService();
 
+  List<CartItem> get cart => _cart;
+
+  bool get isLoadingProduct => _isLoadingProduct;
+
+  CartItem get selectedItem => _selectedItem;
+
   void setCurrentItem(
       String productId, GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
-      isLoadingProduct = true;
+      _isLoadingProduct = true;
       var response = await _productService.getProductById(productId);
 
       if (response.statusCode == 200) {
@@ -36,12 +42,12 @@ class CartController extends ChangeNotifier {
         var item = CartItem(product: product, quantity: 1);
         if (isItemInCart(item)) {
           var foundItem = getCartItem(item);
-          selectedItem = foundItem;
-          isLoadingProduct = false;
+          _selectedItem = foundItem;
+          _isLoadingProduct = false;
           notifyListeners();
         } else {
-          selectedItem = CartItem(product: product, quantity: 1);
-          isLoadingProduct = false;
+          _selectedItem = CartItem(product: product, quantity: 1);
+          _isLoadingProduct = false;
           notifyListeners();
         }
       } else {
@@ -91,30 +97,30 @@ class CartController extends ChangeNotifier {
   }
 
   increaseCartItemAndProductDetailItemQuantity() {
-    if (isItemInCart(selectedItem)) {
-      var foundItem = getCartItem(selectedItem);
+    if (isItemInCart(_selectedItem)) {
+      var foundItem = getCartItem(_selectedItem);
       if (foundItem != null) {
         //this affects both selected item and item in cart's quantity
         foundItem.quantity++;
         notifyListeners();
       }
     } else {
-      selectedItem.quantity++;
+      _selectedItem.quantity++;
       notifyListeners();
     }
   }
 
   decreaseCartItemAndProductDetailItemQuantity() {
-    if (isItemInCart(selectedItem)) {
-      var foundItem = getCartItem(selectedItem);
+    if (isItemInCart(_selectedItem)) {
+      var foundItem = getCartItem(_selectedItem);
       if (foundItem != null && foundItem.quantity > 1) {
         //this affects both selected item and item in cart's quantity
         foundItem.quantity--;
         notifyListeners();
       }
     } else {
-      if (selectedItem.quantity > 1) {
-        selectedItem.quantity--;
+      if (_selectedItem.quantity > 1) {
+        _selectedItem.quantity--;
         notifyListeners();
       }
     }

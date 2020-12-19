@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthController {
-  final storage = FlutterSecureStorage();
+  final _storage = FlutterSecureStorage();
   final _authService = AuthService();
 
   saveUserDataAndLoginStatus(
@@ -18,24 +18,24 @@ class AuthController {
     String email,
     String name,
   ) async {
-    await storage.write(key: 'UserId', value: userId);
-    await storage.write(key: 'IsLoggedFlag', value: isLoggedFlag);
-    await storage.write(key: 'jwt', value: jwt);
-    await storage.write(key: 'email', value: email);
-    await storage.write(key: 'name', value: name);
+    await _storage.write(key: 'UserId', value: userId);
+    await _storage.write(key: 'IsLoggedFlag', value: isLoggedFlag);
+    await _storage.write(key: 'jwt', value: jwt);
+    await _storage.write(key: 'email', value: email);
+    await _storage.write(key: 'name', value: name);
   }
 
   getUserDataAndLoginStatus() async {
-    String userId = await storage.read(key: 'UserId');
-    String isLoggedFlag = await storage.read(key: 'IsLoggedFlag');
-    String token = await storage.read(key: 'jwt');
-    String email = await storage.read(key: 'email');
-    String name = await storage.read(key: 'name');
+    String userId = await _storage.read(key: 'UserId');
+    String isLoggedFlag = await _storage.read(key: 'IsLoggedFlag');
+    String token = await _storage.read(key: 'jwt');
+    String email = await _storage.read(key: 'email');
+    String name = await _storage.read(key: 'name');
     return [userId, isLoggedFlag, token, email, name];
   }
 
   deleteUserDataAndLoginStatus() async {
-    await storage.deleteAll();
+    await _storage.deleteAll();
   }
 
   Future<bool> emailNameAndPasswordSignUp(
@@ -115,7 +115,7 @@ class AuthController {
   }
 
   Future<bool> isTokenValid() async {
-    String token = await storage.read(key: 'jwt');
+    String token = await _storage.read(key: 'jwt');
 
     if (token == null || token.isEmpty) {
       return false;
@@ -138,7 +138,7 @@ class AuthController {
 
       if (response.statusCode == 200) {
         var responseBody = json.decode(response.body);
-        await storage.write(key: 'name', value: responseBody['data']['name']);
+        await _storage.write(key: 'name', value: responseBody['data']['name']);
 
         return true;
       } else {
@@ -170,7 +170,8 @@ class AuthController {
 
       if (response.statusCode == 200) {
         var responseBody = json.decode(response.body);
-        await storage.write(key: 'email', value: responseBody['data']['email']);
+        await _storage.write(
+            key: 'email', value: responseBody['data']['email']);
         return true;
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);
