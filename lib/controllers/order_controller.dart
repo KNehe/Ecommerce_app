@@ -12,16 +12,36 @@ import 'package:flutter/material.dart';
 
 class OrderController extends ChangeNotifier {
   final _orderService = OrderService();
-  var shippingCost;
-  var tax;
-  Order singleOrder;
+
   final _authContoller = AuthController();
-  var orders = List<Order>();
-  bool isLoadingOrders = true;
+
+  var _shippingCost;
+
+  var _tax;
+
+  Order _singleOrder;
+
+  var _orders = List<Order>();
+
+  bool _isLoadingOrders = true;
+
+  bool get isLoadingOrders => _isLoadingOrders;
+
+  List<Order> get orders => _orders;
+
+  Order get singleOrder => _singleOrder;
+
+  get tax => _tax;
+
+  get shippingCost => _shippingCost;
+
+  bool _isProcessingOrder = true;
+
+  get isProcessingOrder => _isProcessingOrder;
 
   void setShippingCost(String country) async {
     try {
-      shippingCost = await _orderService.getShippingCost(country);
+      _shippingCost = await _orderService.getShippingCost(country);
     } catch (e) {
       print('Order controller ${e.toString()}');
     }
@@ -29,7 +49,7 @@ class OrderController extends ChangeNotifier {
 
   void setTax(String country) async {
     try {
-      tax = await _orderService.getTax(country);
+      _tax = await _orderService.getTax(country);
     } catch (e) {
       print('Order controller ${e.toString()}');
     }
@@ -66,7 +86,9 @@ class OrderController extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var jsonD = json.decode(response.body);
-        singleOrder = orderFromJson(json.encode(jsonD['data']));
+        _singleOrder = orderFromJson(json.encode(jsonD['data']));
+        _isProcessingOrder = false;
+        notifyListeners();
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);
       }
@@ -116,7 +138,9 @@ class OrderController extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var jsonD = json.decode(response.body);
-        singleOrder = orderFromJson(json.encode(jsonD['data']));
+        _singleOrder = orderFromJson(json.encode(jsonD['data']));
+        _isProcessingOrder = false;
+        notifyListeners();
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);
       }
@@ -134,40 +158,41 @@ class OrderController extends ChangeNotifier {
 
   void getOrders(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
-      isLoadingOrders = true;
+      _isLoadingOrders = true;
       var data = await _authContoller.getUserDataAndLoginStatus();
       var response = await _orderService.getOrders(data[0], data[2]);
       if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);
-        orders = ordersFromJson(json.encode(decodedResponse['data']['orders']));
-        isLoadingOrders = false;
+        _orders =
+            ordersFromJson(json.encode(decodedResponse['data']['orders']));
+        _isLoadingOrders = false;
         notifyListeners();
       } else {
-        isLoadingOrders = true;
+        _isLoadingOrders = true;
         notifyListeners();
         ErrorController.showErrorFromApi(scaffoldKey, response);
       }
     } on SocketException catch (_) {
-      isLoadingOrders = true;
+      _isLoadingOrders = true;
       notifyListeners();
       ErrorController.showNoInternetError(scaffoldKey);
     } on HttpException catch (_) {
-      isLoadingOrders = true;
+      _isLoadingOrders = true;
       notifyListeners();
       ErrorController.showNoServerError(scaffoldKey);
     } on FormatException catch (_) {
-      isLoadingOrders = true;
+      _isLoadingOrders = true;
       notifyListeners();
       ErrorController.showFormatExceptionError(scaffoldKey);
     } catch (e) {
       print('error fetching orders ${e.toString()}');
-      isLoadingOrders = true;
+      _isLoadingOrders = true;
       notifyListeners();
       ErrorController.showUnKownError(scaffoldKey);
     }
   }
 
   void setSingleOrder(Order order) {
-    this.singleOrder = order;
+    this._singleOrder = order;
   }
 }

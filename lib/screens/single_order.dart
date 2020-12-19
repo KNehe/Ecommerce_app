@@ -17,25 +17,15 @@ class SingleOrder extends StatefulWidget {
 
 class _SingleOrderState extends State<SingleOrder> {
   Future<bool> _onBackPressed() {
-    if (_currentTask == VIEWING_SINGLE_OLD_ORDER_HISTORY) {
+    var currentTask =
+        Provider.of<ActivityTracker>(context, listen: false).currentTask;
+    if (currentTask == VIEWING_SINGLE_OLD_ORDER_HISTORY) {
       Navigator.pop(context);
     } else {
       Navigator.pushNamedAndRemoveUntil(
           context, ProductList.id, (route) => false);
     }
     return Future.value(true);
-  }
-
-  var orderDetails;
-  var _currentTask;
-
-  @override
-  void initState() {
-    super.initState();
-    orderDetails =
-        Provider.of<OrderController>(context, listen: false).singleOrder;
-    _currentTask =
-        Provider.of<ActivityTracker>(context, listen: false).currentTask;
   }
 
   @override
@@ -46,7 +36,7 @@ class _SingleOrderState extends State<SingleOrder> {
         child: Scaffold(
             appBar: AppBar(
               title: Text(
-                '$SingleOrder_Screen_Title ${orderDetails.id}',
+                '$SingleOrder_Screen_Title ${context.watch<OrderController>().singleOrder.id ?? ''}',
                 style: TextStyle(
                   color: Colors.black,
                 ),
@@ -73,14 +63,14 @@ class _SingleOrderState extends State<SingleOrder> {
                       ),
                       SizedBox(height: 20.0),
                       Text(
-                        'Date and time ordered: ${orderDetails.dateOrdered}',
+                        'Date and time ordered:  ${context.watch<OrderController>().singleOrder.dateOrdered ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
                       ),
                       SizedBox(height: 10.0),
                       Text(
-                        'Payment method: ${orderDetails.paymentMethod}',
+                        'Payment method:  ${context.watch<OrderController>().singleOrder.paymentMethod ?? ''} ',
                         style: TextStyle(
                           fontSize: 15,
                         ),
@@ -89,7 +79,7 @@ class _SingleOrderState extends State<SingleOrder> {
                         height: 10,
                       ),
                       Text(
-                        'Shipping cost: \$ ${orderDetails.shippingCost}',
+                        'Shipping cost: \$ ${context.watch<OrderController>().singleOrder.shippingCost ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
@@ -98,7 +88,7 @@ class _SingleOrderState extends State<SingleOrder> {
                         height: 10,
                       ),
                       Text(
-                        'Tax: \$ ${orderDetails.tax}',
+                        'Tax: \$ ${context.watch<OrderController>().singleOrder.tax ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
@@ -107,7 +97,7 @@ class _SingleOrderState extends State<SingleOrder> {
                         height: 10,
                       ),
                       Text(
-                        'Total item price: \$ ${orderDetails.totalItemPrice}',
+                        'Total item price: \$ ${context.watch<OrderController>().singleOrder.totalItemPrice ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
@@ -116,7 +106,7 @@ class _SingleOrderState extends State<SingleOrder> {
                         height: 10,
                       ),
                       Text(
-                        'Total: \$ ${orderDetails.total}',
+                        'Total: \$  ${context.watch<OrderController>().singleOrder.total ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
@@ -133,42 +123,42 @@ class _SingleOrderState extends State<SingleOrder> {
                       ),
                       SizedBox(height: 20.0),
                       Text(
-                        'Name: ${orderDetails.shippingDetails.name}',
+                        'Name: ${context.watch<OrderController>().singleOrder.shippingDetails.name ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
                       ),
                       SizedBox(height: 10.0),
                       Text(
-                        'Phone Contact: ${orderDetails.shippingDetails.phoneContact}',
+                        'Phone Contact:  ${context.watch<OrderController>().singleOrder.shippingDetails.phoneContact ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
                       ),
                       SizedBox(height: 10.0),
                       Text(
-                        'Address Line: ${orderDetails.shippingDetails.addressLine}',
+                        'Address Line:  ${context.watch<OrderController>().singleOrder.shippingDetails.addressLine ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
                       ),
                       SizedBox(height: 10.0),
                       Text(
-                        'City: ${orderDetails.shippingDetails.city}',
+                        'City: ${context.watch<OrderController>().singleOrder.shippingDetails.city ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
                       ),
                       SizedBox(height: 10.0),
                       Text(
-                        'Postal code: ${orderDetails.shippingDetails.postalCode}',
+                        'Postal code: ${context.watch<OrderController>().singleOrder.shippingDetails.postalCode ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
                       ),
                       SizedBox(height: 10.0),
                       Text(
-                        'Country: ${orderDetails.shippingDetails.country}',
+                        'Country:  ${context.watch<OrderController>().singleOrder.shippingDetails.country ?? ''}',
                         style: TextStyle(
                           fontSize: 15,
                         ),
@@ -184,32 +174,39 @@ class _SingleOrderState extends State<SingleOrder> {
                         ),
                       ),
                       SizedBox(height: 20.0),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
-                          itemCount: orderDetails.cartItems.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Name: ${orderDetails.cartItems[index].product.name}",
-                                ),
-                                SizedBox(height: 10.0),
-                                Text(
-                                  "Price: ${orderDetails.cartItems[index].product.price}",
-                                ),
-                                SizedBox(height: 10.0),
-                                Text(
-                                  "Quantity: ${orderDetails.cartItems[index].quantity}",
-                                ),
-                                Divider(
-                                  thickness: 5,
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            );
-                          }),
+                      Consumer<OrderController>(
+                          builder: (context, ctlr, chidl) {
+                        if (ctlr.isProcessingOrder &&
+                            ctlr.singleOrder.cartItems == null) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            physics: ScrollPhysics(),
+                            itemCount: ctlr.singleOrder.cartItems.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Name: ${ctlr.singleOrder.cartItems[index].product.name}",
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    "Price: ${ctlr.singleOrder.cartItems[index].product.price}",
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    "Quantity: ${ctlr.singleOrder.cartItems[index].quantity}",
+                                  ),
+                                  Divider(
+                                    thickness: 5,
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              );
+                            });
+                      }),
 
                       SizedBox(height: 10.0),
                       Center(
@@ -217,7 +214,7 @@ class _SingleOrderState extends State<SingleOrder> {
                           elevation: 0,
                           onPressed: () {},
                           child: Text(
-                            "${_currentTask == VIEWING_SINGLE_OLD_ORDER_HISTORY ? 'Thank you for the support' : "WE'LL CONTACT YOU SHORTLY"}",
+                            "${context.watch<ActivityTracker>().currentTask == VIEWING_SINGLE_OLD_ORDER_HISTORY ? 'Thank you for the support' : "WE'LL CONTACT YOU SHORTLY"}",
                             style: TextStyle(
                               color: Colors.white,
                             ),

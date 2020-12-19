@@ -134,11 +134,6 @@ class _ProductDetailState extends State<ProductDetail> {
                             return Center(
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.0,
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes
-                                    : null,
                               ),
                             );
                           },

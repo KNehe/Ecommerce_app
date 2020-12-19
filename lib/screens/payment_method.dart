@@ -88,7 +88,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
       GlobalSnackBar.showSnackbar(
         _scaffoldKey,
         'Process cancelled',
-        SnackBarType.Success,
+        SnackBarType.Error,
       );
     }
 

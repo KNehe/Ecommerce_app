@@ -36,10 +36,6 @@ class ProductCard extends StatelessWidget {
                   return Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 2.0,
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes
-                          : null,
                     ),
                   );
                 },
