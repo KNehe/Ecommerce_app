@@ -19,6 +19,11 @@ class CategoryController extends ChangeNotifier {
 
   bool get isLoadingCategories => _isLoadingCategories;
 
+  setIsLoadingCategories(bool value) {
+    _isLoadingCategories = value;
+    notifyListeners();
+  }
+
   void getAllCategories(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       _isLoadingCategories = true;

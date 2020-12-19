@@ -18,6 +18,11 @@ class ProductController extends ChangeNotifier {
 
   bool get isLoadingAllProducts => _isLoadingAllProducts;
 
+  setIsLoadingAllProducts(bool value) {
+    _isLoadingAllProducts = value;
+    notifyListeners();
+  }
+
   void getAllProducts(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
       _isLoadingAllProducts = true;
