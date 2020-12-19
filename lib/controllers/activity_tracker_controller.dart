@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 
 class ActivityTracker extends ChangeNotifier {
-  String currentTask = '';
+  String _currentTask = '';
 
   setTaskCurrentTask(String task) {
-    currentTask = task;
+    _currentTask = task;
   }
+
+  String get currentTask => _currentTask;
 }

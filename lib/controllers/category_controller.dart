@@ -11,24 +11,33 @@ import 'package:flutter/material.dart';
 class CategoryController extends ChangeNotifier {
   final _categoryService = CategoryService();
 
-  var isLoadingCategories = true;
+  var _isLoadingCategories = true;
 
-  var categoryList = List<CategoryModel>();
+  var _categoryList = List<CategoryModel>();
+
+  List<CategoryModel> get categoryList => _categoryList;
+
+  bool get isLoadingCategories => _isLoadingCategories;
+
+  setIsLoadingCategories(bool value) {
+    _isLoadingCategories = value;
+    notifyListeners();
+  }
 
   void getAllCategories(GlobalKey<ScaffoldState> scaffoldKey) async {
     try {
-      isLoadingCategories = true;
+      _isLoadingCategories = true;
       //important when refresh indicator is called
       //to avoid add same items
-      categoryList.clear();
+      _categoryList.clear();
 
       var response = await _categoryService.getCategories();
 
       if (response.statusCode == 200) {
         var jsonBody = json.decode(response.body);
         var jsonCategories = jsonBody['data']['categories'];
-        categoryList.addAll(categoryFromJson(json.encode(jsonCategories)));
-        isLoadingCategories = false;
+        _categoryList.addAll(categoryFromJson(json.encode(jsonCategories)));
+        _isLoadingCategories = false;
         notifyListeners();
       } else {
         ErrorController.showErrorFromApi(scaffoldKey, response);

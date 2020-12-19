@@ -6,56 +6,40 @@ import 'package:ecommerceapp/controllers/error_controller.dart';
 import 'package:ecommerceapp/models/cart_item.dart';
 import 'package:ecommerceapp/models/product.dart';
 import 'package:ecommerceapp/services/cart_service.dart';
-import 'package:ecommerceapp/services/product_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CartController extends ChangeNotifier {
-  var cart = List<CartItem>();
+  var _cart = List<CartItem>();
 
-  final _productService = ProductService();
+  bool _isLoadingProduct = true;
 
-  bool isLoadingProduct = true;
-
-  CartItem selectedItem = CartItem();
+  CartItem _selectedItem = CartItem();
 
   var _authController = AuthController();
 
   var _cartService = CartService();
 
-  void setCurrentItem(
-      String productId, GlobalKey<ScaffoldState> scaffoldKey) async {
-    try {
-      isLoadingProduct = true;
-      var response = await _productService.getProductById(productId);
+  List<CartItem> get cart => _cart;
 
-      if (response.statusCode == 200) {
-        var responseJsonStr = json.decode(response.body);
-        var jsonProd = responseJsonStr['data']['product'];
-        var product = Product.fromJson(jsonProd);
-        var item = CartItem(product: product, quantity: 1);
-        if (isItemInCart(item)) {
-          var foundItem = getCartItem(item);
-          selectedItem = foundItem;
-          isLoadingProduct = false;
-          notifyListeners();
-        } else {
-          selectedItem = CartItem(product: product, quantity: 1);
-          isLoadingProduct = false;
-          notifyListeners();
-        }
-      } else {
-        ErrorController.showErrorFromApi(scaffoldKey, response);
-      }
-    } on SocketException catch (_) {
-      ErrorController.showNoInternetError(scaffoldKey);
-    } on HttpException catch (_) {
-      ErrorController.showNoServerError(scaffoldKey);
-    } on FormatException catch (_) {
-      ErrorController.showFormatExceptionError(scaffoldKey);
-    } catch (e) {
-      print("Error ${e.toString()}");
-      ErrorController.showUnKownError(scaffoldKey);
+  bool get isLoadingProduct => _isLoadingProduct;
+
+  CartItem get selectedItem => _selectedItem;
+
+  void setCurrentItem(Product product) async {
+    _isLoadingProduct = true;
+
+    var item = CartItem(product: product, quantity: 1);
+
+    if (isItemInCart(item)) {
+      var foundItem = getCartItem(item);
+      _selectedItem = foundItem;
+      _isLoadingProduct = false;
+      notifyListeners();
+    } else {
+      _selectedItem = CartItem(product: product, quantity: 1);
+      _isLoadingProduct = false;
+      notifyListeners();
     }
   }
 
@@ -91,30 +75,30 @@ class CartController extends ChangeNotifier {
   }
 
   increaseCartItemAndProductDetailItemQuantity() {
-    if (isItemInCart(selectedItem)) {
-      var foundItem = getCartItem(selectedItem);
+    if (isItemInCart(_selectedItem)) {
+      var foundItem = getCartItem(_selectedItem);
       if (foundItem != null) {
         //this affects both selected item and item in cart's quantity
         foundItem.quantity++;
         notifyListeners();
       }
     } else {
-      selectedItem.quantity++;
+      _selectedItem.quantity++;
       notifyListeners();
     }
   }
 
   decreaseCartItemAndProductDetailItemQuantity() {
-    if (isItemInCart(selectedItem)) {
-      var foundItem = getCartItem(selectedItem);
+    if (isItemInCart(_selectedItem)) {
+      var foundItem = getCartItem(_selectedItem);
       if (foundItem != null && foundItem.quantity > 1) {
         //this affects both selected item and item in cart's quantity
         foundItem.quantity--;
         notifyListeners();
       }
     } else {
-      if (selectedItem.quantity > 1) {
-        selectedItem.quantity--;
+      if (_selectedItem.quantity > 1) {
+        _selectedItem.quantity--;
         notifyListeners();
       }
     }
@@ -219,4 +203,44 @@ class CartController extends ChangeNotifier {
       print('Delete saved cart err ${e.toString()}');
     }
   }
+
+  //REQUIRED IF YOU NEED TO FETCH PRODUCT BY ID  FROM API AND SET SELECTED ITEM
+
+  // void setCurrentItem(
+  //     String productId, GlobalKey<ScaffoldState> scaffoldKey) async {
+  //   try {
+  //     _isLoadingProduct = true;
+
+  //     var response = await _productService.getProductById(productId);
+
+  //     if (response.statusCode == 200) {
+  //       var responseJsonStr = json.decode(response.body);
+  //       var jsonProd = responseJsonStr['data']['product'];
+  //       var product = Product.fromJson(jsonProd);
+  //       var item = CartItem(product: product, quantity: 1);
+  //       if (isItemInCart(item)) {
+  //         var foundItem = getCartItem(item);
+  //         _selectedItem = foundItem;
+  //         _isLoadingProduct = false;
+  //         notifyListeners();
+  //       } else {
+  //         _selectedItem = CartItem(product: product, quantity: 1);
+  //         _isLoadingProduct = false;
+  //         notifyListeners();
+  //       }
+  //     } else {
+  //       ErrorController.showErrorFromApi(scaffoldKey, response);
+  //     }
+  //   } on SocketException catch (_) {
+  //     ErrorController.showNoInternetError(scaffoldKey);
+  //   } on HttpException catch (_) {
+  //     ErrorController.showNoServerError(scaffoldKey);
+  //   } on FormatException catch (_) {
+  //     ErrorController.showFormatExceptionError(scaffoldKey);
+  //   } catch (e) {
+  //     print("Error ${e.toString()}");
+  //     ErrorController.showUnKownError(scaffoldKey);
+  //   }
+  // }
+
 }

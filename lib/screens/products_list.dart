@@ -60,6 +60,8 @@ class _ProductListState extends State<ProductList> {
   }
 
   Future _handleRefresh() {
+    _productController.setIsLoadingAllProducts(true);
+    _categoryController.setIsLoadingCategories(true);
     _categoryController.getAllCategories(_scaffoldKey);
     _productController.getAllProducts(_scaffoldKey);
     _categorySelectedIndex = 0;
@@ -251,8 +253,8 @@ class _ProductListState extends State<ProductList> {
                       return ProductCard(
                         product: productCtlr.productList[index],
                         onProductTapped: () {
-                          _cartController.setCurrentItem(
-                              productCtlr.productList[index].id, _scaffoldKey);
+                          _cartController
+                              .setCurrentItem(productCtlr.productList[index]);
                           Navigator.pushNamed(context, ProductDetail.id);
                         },
                       );
